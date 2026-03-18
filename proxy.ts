@@ -33,7 +33,9 @@ export async function proxy(request: NextRequest) {
     request.nextUrl.pathname.startsWith("/login") ||
     request.nextUrl.pathname.startsWith("/register")
 
-  const isProtectedRoute = request.nextUrl.pathname.startsWith("/lab")
+  const isProtectedRoute = 
+    request.nextUrl.pathname.startsWith("/lab") ||
+    request.nextUrl.pathname.startsWith("/challenge")
 
   if (!user && isProtectedRoute) {
     return NextResponse.redirect(new URL("/login", request.url))
