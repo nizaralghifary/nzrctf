@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { createClient } from "@/lib/supabase/server"
 import {
   Database,
   Code2,
@@ -9,15 +10,33 @@ import {
   Flag,
   Trophy,
   ChevronRight,
+  MoveRight,
+  User,
 } from "lucide-react"
 
-export default function LandingPage() {
+export default async function Home() {
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  let profile = null
+  if (user) {
+    const { data } = await supabase
+      .from("profiles")
+      .select("username")
+      .eq("id", user.id)
+      .single()
+    profile = data
+  }
+
   const features = [
     {
       icon: Database,
       title: "SQL Injection",
       description: "Bypass login panels, extract database contents, and exploit poorly sanitized queries.",
-      difficulty: "Easy to Hard",
+      difficultyFrom: "Easy",
+      difficultyTo: "Hard",
       color: "text-[#ff3c6e] border-[#ff3c6e]/30 bg-[#ff3c6e]/10",
       iconColor: "text-[#ff3c6e]",
     },
@@ -25,7 +44,8 @@ export default function LandingPage() {
       icon: Code2,
       title: "Cross-Site Scripting",
       description: "Inject malicious scripts, steal cookies, and hijack user sessions.",
-      difficulty: "Easy to Hard",
+      difficultyFrom: "Easy",
+      difficultyTo: "Hard",
       color: "text-[#ffd700] border-[#ffd700]/30 bg-[#ffd700]/10",
       iconColor: "text-[#ffd700]",
     },
@@ -33,7 +53,8 @@ export default function LandingPage() {
       icon: ShieldOff,
       title: "Broken Access Control",
       description: "Access resources you shouldn't, manipulate object references, and escalate privileges.",
-      difficulty: "Medium to Hard",
+      difficultyFrom: "Medium",
+      difficultyTo: "Hard",
       color: "text-[#00bfff] border-[#00bfff]/30 bg-[#00bfff]/10",
       iconColor: "text-[#00bfff]",
     },
@@ -41,7 +62,8 @@ export default function LandingPage() {
       icon: Globe,
       title: "SSRF / LFI / XXE",
       description: "Reach internal services, read sensitive files, and exploit XML parsers.",
-      difficulty: "Medium to Hard",
+      difficultyFrom: "Medium",
+      difficultyTo: "Hard",
       color: "text-[#bf5fff] border-[#bf5fff]/30 bg-[#bf5fff]/10",
       iconColor: "text-[#bf5fff]",
     },
@@ -80,20 +102,36 @@ export default function LandingPage() {
         <span className="text-[#00ff88] font-black font-mono text-lg tracking-tight">
           NzrCTF
         </span>
-        <div className="flex items-center gap-3">
-          <Link
-            href="/login"
-            className="text-[#555570] hover:text-white font-mono text-xs transition-colors px-3 py-1.5"
-          >
-            Login
-          </Link>
-          <Link
-            href="/register"
-            className="bg-[#00ff88] text-black font-bold font-mono text-xs px-3 py-1.5 rounded hover:opacity-90 transition-opacity flex items-center gap-1"
-          >
-            Register <ChevronRight size={12} />
-          </Link>
-        </div>
+
+        {user ? (
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 text-[#555570] font-mono text-xs">
+              <User size={13} className="text-[#00ff88]" />
+              <span className="text-white">{profile?.username ?? user.email}</span>
+            </div>
+            <Link
+              href="/lab"
+              className="bg-[#00ff88] text-black font-bold font-mono text-xs px-3 py-1.5 rounded hover:opacity-90 transition-opacity flex items-center gap-1"
+            >
+              Lab <ChevronRight size={12} />
+            </Link>
+          </div>
+        ) : (
+          <div className="flex items-center gap-3">
+            <Link
+              href="/login"
+              className="text-[#555570] hover:text-white font-mono text-xs transition-colors px-3 py-1.5"
+            >
+              Login
+            </Link>
+            <Link
+              href="/register"
+              className="bg-[#00ff88] text-black font-bold font-mono text-xs px-3 py-1.5 rounded hover:opacity-90 transition-opacity flex items-center gap-1"
+            >
+              Register <ChevronRight size={12} />
+            </Link>
+          </div>
+        )}
       </nav>
 
       <section className="max-w-4xl mx-auto px-6 pt-20 pb-16 text-center">
@@ -110,23 +148,25 @@ export default function LandingPage() {
         </p>
         <div className="flex items-center justify-center gap-3 flex-wrap">
           <Link
-            href="/register"
+            href={user ? "/lab" : "/register"}
             className="bg-[#00ff88] text-black font-bold text-sm px-6 py-3 rounded hover:opacity-90 active:scale-[0.98] transition-all flex items-center gap-2"
           >
-            Start Hacking <ChevronRight size={14} />
+            {user ? "Go to Lab" : "Start Hacking"} <ChevronRight size={14} />
           </Link>
-          <Link
-            href="/login"
-            className="bg-[#11111a] border border-[#1e1e2e] text-white font-bold text-sm px-6 py-3 rounded hover:border-[#333355] transition-all"
-          >
-            Sign In
-          </Link>
+          {!user && (
+            <Link
+              href="/login"
+              className="bg-[#11111a] border border-[#1e1e2e] text-white font-bold text-sm px-6 py-3 rounded hover:border-[#333355] transition-all"
+            >
+              Sign In
+            </Link>
+          )}
         </div>
 
         <div className="flex items-center justify-center gap-8 mt-14 flex-wrap">
           {[
             { val: "4", label: "Categories" },
-            { val: "10+", label: "Challenges" },
+            { val: "7+", label: "Challenges" },
             { val: "3", label: "Difficulty Levels" },
             { val: "∞", label: "Things to Learn" },
           ].map((stat) => (
@@ -157,8 +197,8 @@ export default function LandingPage() {
                     <Icon size={16} className={f.iconColor} />
                     <span className="font-bold text-sm">{f.title}</span>
                   </div>
-                  <span className={`text-xs font-mono border px-1.5 py-0.5 rounded shrink-0 ${f.color}`}>
-                    {f.difficulty}
+                  <span className={`text-xs font-mono border px-1.5 py-0.5 rounded shrink-0 flex items-center gap-1 ${f.color}`}>
+                    {f.difficultyFrom} <MoveRight size={10} /> {f.difficultyTo}
                   </span>
                 </div>
                 <p className="text-[#555570] font-mono text-xs leading-relaxed">
@@ -205,10 +245,10 @@ export default function LandingPage() {
           Create a free account and start solving challenges right away.
         </p>
         <Link
-          href="/register"
+          href={user ? "/lab" : "/register"}
           className="inline-flex items-center gap-2 bg-[#00ff88] text-black font-bold text-sm px-8 py-3 rounded hover:opacity-90 active:scale-[0.98] transition-all"
         >
-          Create Account <ChevronRight size={14} />
+          {user ? "Go to Lab" : "Create Account"} <ChevronRight size={14} />
         </Link>
       </section>
 

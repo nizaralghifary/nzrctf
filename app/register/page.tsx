@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { createClient } from "@/lib/supabase/client"
 
-export default function RegisterPage() {
+export default function Register() {
   const router = useRouter()
   const supabase = createClient()
 
