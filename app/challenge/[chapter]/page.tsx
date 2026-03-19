@@ -1,6 +1,8 @@
 import { redirect, notFound } from "next/navigation"
 import Link from "next/link"
 import { createClient } from "@/lib/supabase/server"
+import { logout } from "@/lib/actions/auth"
+import SubmitForm from "./submit-form"
 import {
   User,
   Trophy,
@@ -62,7 +64,7 @@ const difficultyConfig: Record<string, { label: string; color: string; bars: num
   hard:   { label: "HARD",   color: "text-[#ff3c6e]", bars: 3 },
 }
 
-export default async function Chapter({
+export default async function ChapterPage({
   params,
 }: {
   params: Promise<{ chapter: string }>
@@ -112,15 +114,6 @@ export default async function Chapter({
       .reduce((sum, c) => sum + c.points, 0) ?? 0
 
   const Icon = config.icon
-
-  async function logout() {
-    "use server"
-    const { createClient } = await import("@/lib/supabase/server")
-    const supabase = await createClient()
-    await supabase.auth.signOut()
-    const { redirect } = await import("next/navigation")
-    redirect("/login")
-  }
 
   return (
     <div className="min-h-screen bg-[#0a0a0f] text-white">
@@ -194,8 +187,6 @@ export default async function Chapter({
             {challenges?.map((challenge, idx) => {
               const solved = solvedIds.has(challenge.id)
               const diff = difficultyConfig[challenge.difficulty]
-
-              // Stage 1 selalu terbuka, stage selanjutnya butuh stage sebelumnya solved
               const prevChallenge = idx > 0 ? challenges[idx - 1] : null
               const isLocked = prevChallenge !== null && !solvedIds.has(prevChallenge.id)
 
@@ -205,7 +196,7 @@ export default async function Chapter({
                   style={{
                     clipPath: "polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px))",
                   }}
-                  className={`relative bg-[#11111a] border p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 transition-all ${
+                  className={`relative bg-[#11111a] border p-4 sm:p-5 transition-all ${
                     isLocked
                       ? "border-[#1e1e2e] opacity-50"
                       : solved
@@ -213,7 +204,7 @@ export default async function Chapter({
                       : `${config.border} ${config.glow}`
                   }`}
                 >
-                  <div className="flex items-start sm:items-center gap-4 min-w-0">
+                  <div className="flex items-start gap-4">
                     <div
                       style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 0 100%)" }}
                       className={`shrink-0 w-10 h-10 flex items-center justify-center bg-[#0a0a0f] border ${
@@ -246,57 +237,61 @@ export default async function Chapter({
                         )}
                       </div>
 
-                      <p className={`text-xs font-mono leading-relaxed mb-2 ${isLocked ? "text-[#333355]" : "text-[#555570]"}`}>
+                      <p className={`text-xs font-mono leading-relaxed mb-3 ${isLocked ? "text-[#333355]" : "text-[#555570]"}`}>
                         {isLocked ? "Complete previous stage to unlock" : challenge.description}
                       </p>
 
                       {!isLocked && (
-                        <div className="flex items-center gap-1.5">
-                          <div className="flex gap-0.5">
-                            {[1, 2, 3].map((i) => (
-                              <div
-                                key={i}
-                                className={`w-4 h-1 rounded-sm ${
-                                  i <= (diff?.bars ?? 1)
-                                    ? diff?.color.replace("text-", "bg-") ?? "bg-[#00ff88]"
-                                    : "bg-[#1e1e2e]"
-                                }`}
-                              />
-                            ))}
+                        <>
+                          <div className="flex items-center gap-3 mb-3">
+                            <div className="flex items-center gap-1.5">
+                              <div className="flex gap-0.5">
+                                {[1, 2, 3].map((i) => (
+                                  <div
+                                    key={i}
+                                    className={`w-4 h-1 rounded-sm ${
+                                      i <= (diff?.bars ?? 1)
+                                        ? diff?.color.replace("text-", "bg-") ?? "bg-[#00ff88]"
+                                        : "bg-[#1e1e2e]"
+                                    }`}
+                                  />
+                                ))}
+                              </div>
+                              <span className={`text-xs font-mono font-bold ${diff?.color ?? "text-white"}`}>
+                                {diff?.label}
+                              </span>
+                            </div>
+                            <span className="text-[#00ff88] font-black font-mono text-sm">
+                              {challenge.points} pts
+                            </span>
+                            <a
+                              href={challenge.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 0 100%)" }}
+                              className="flex items-center gap-1 bg-[#11111a] border border-[#1e1e2e] hover:border-[#333355] text-white text-xs font-bold px-3 py-1.5 transition-all"
+                            >
+                              OPEN <ExternalLink size={11} />
+                            </a>
                           </div>
-                          <span className={`text-xs font-mono font-bold ${diff?.color ?? "text-white"}`}>
-                            {diff?.label}
-                          </span>
-                        </div>
+
+                          {solved ? (
+                            <div
+                              style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 0 100%)" }}
+                              className="inline-flex items-center gap-1 bg-[#00ff88]/10 border border-[#00ff88]/30 text-[#00ff88] text-xs font-mono font-bold px-3 py-1.5"
+                            >
+                              <CheckCircle size={11} /> SOLVED
+                            </div>
+                          ) : (
+                            <SubmitForm
+                              challengeId={challenge.id}
+                              chapterSlug={chapterSlug}
+                            />
+                          )}
+                        </>
                       )}
                     </div>
                   </div>
-
-                  {!isLocked && (
-                    <div className="flex items-center gap-3 shrink-0 sm:ml-auto">
-                      <span className="text-[#00ff88] font-black font-mono text-sm">
-                        {challenge.points} pts
-                      </span>
-                      {solved ? (
-                        <div
-                          style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 0 100%)" }}
-                          className="flex items-center gap-1 bg-[#00ff88]/10 border border-[#00ff88]/30 text-[#00ff88] text-xs font-mono font-bold px-3 py-1.5"
-                        >
-                          <CheckCircle size={11} /> SOLVED
-                        </div>
-                      ) : (
-                        <a
-                          href={challenge.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 0 100%)" }}
-                          className="flex items-center gap-1 bg-[#00ff88] text-black text-xs font-bold px-3 py-1.5 hover:opacity-90 transition-opacity"
-                        >
-                          OPEN <ExternalLink size={11} />
-                        </a>
-                      )}
-                    </div>
-                  )}
                 </div>
               )
             })}
