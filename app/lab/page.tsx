@@ -1,9 +1,9 @@
 import { redirect } from "next/navigation"
 import Link from "next/link"
 import { createClient } from "@/lib/supabase/server"
-import { logout } from "@/lib/actions/auth"
-import { User, Trophy, Database, Code2, ShieldOff, Globe, ChevronRight } from "lucide-react"
+import { Database, Code2, ShieldOff, Globe, ChevronRight } from "lucide-react"
 import ProgressBar from "@/components/progress-bar"
+import NavbarServer from "@/components/navbar-server"
 
 const chapterConfig = [
   {
@@ -88,27 +88,7 @@ export default async function Lab() {
 
   return (
     <div className="min-h-screen bg-[#0a0a0f] text-white">
-
-      <nav className="border-b border-[#1e1e2e] bg-[#0a0a0f]/95 sticky top-0 z-10 px-6 py-3 flex items-center justify-between">
-        <span className="text-[#00ff88] font-black font-mono text-lg tracking-tight">
-          NzrCTF<span className="text-white"> Lab</span>
-        </span>
-        <div className="flex items-center gap-4">
-          <div className="hidden sm:flex items-center gap-1.5 font-mono text-xs">
-            <User size={12} className="text-[#00ff88]" />
-            <span className="text-white">{profile?.username ?? user.email}</span>
-          </div>
-          <div className="flex items-center gap-1.5 text-[#00ff88] font-mono text-xs font-bold">
-            <Trophy size={12} />
-            <span>{totalPoints} pts</span>
-          </div>
-          <form action={logout}>
-            <button className="text-[#555570] hover:text-white font-mono text-xs transition-colors">
-              Logout
-            </button>
-          </form>
-        </div>
-      </nav>
+      <NavbarServer />
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
 
