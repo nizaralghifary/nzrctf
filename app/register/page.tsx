@@ -54,27 +54,17 @@ export default function Register() {
     })
 
     if (signUpError) {
-      setError(signUpError.message)
+      if (signUpError.message.toLowerCase().includes("username")) {
+        setError("Username is already taken, please choose another")
+      } else {
+        setError(signUpError.message)
+      }
       setLoading(false)
       return
     }
 
     if (!data.user) {
       setError("Failed to create account, please try again")
-      setLoading(false)
-      return
-    }
-
-    const { error: profileError } = await supabase
-      .from("profiles")
-      .insert({
-        id: data.user.id,
-        username: username.trim(),
-        email: email,
-      })
-
-    if (profileError) {
-      setError("Failed to save profile: " + profileError.message)
       setLoading(false)
       return
     }

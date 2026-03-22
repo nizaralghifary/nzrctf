@@ -97,7 +97,7 @@ export default async function ChapterPage({
 
   const { data: challenges } = await supabase
     .from("challenges")
-    .select("*")
+    .select("id, title, description, difficulty, points, url, chapter, stage_order, is_active")
     .eq("is_active", true)
     .eq("chapter", config.id)
     .order("stage_order", { ascending: true })

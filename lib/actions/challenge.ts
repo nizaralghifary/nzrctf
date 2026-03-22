@@ -37,12 +37,36 @@ export async function submitFlag(prevState: State, formData: FormData): Promise<
 
   const { data: challenge } = await supabase
     .from("challenges")
-    .select("id, flag, points")
+    .select("id, flag, points, chapter")
     .eq("id", challengeId)
     .single()
 
   if (!challenge) {
     return { success: false, message: "Challenge not found" }
+  }
+
+  const { data: allChallenges } = await supabase
+    .from("challenges")
+    .select("id, stage_order")
+    .eq("chapter", challenge.chapter)
+    .eq("is_active", true)
+    .order("stage_order", { ascending: true })
+
+  const currentIndex = allChallenges?.findIndex((c) => c.id === challengeId) ?? 0
+
+  if (currentIndex > 0) {
+    const prevChallenge = allChallenges![currentIndex - 1]
+    const { data: prevSolved } = await supabase
+      .from("submissions")
+      .select("id")
+      .eq("user_id", user.id)
+      .eq("challenge_id", prevChallenge.id)
+      .eq("is_correct", true)
+      .single()
+
+    if (!prevSolved) {
+      return { success: false, message: "Complete previous stage first" }
+    }
   }
 
   const isCorrect = flag.trim() === challenge.flag
@@ -66,10 +90,11 @@ export async function submitFlag(prevState: State, formData: FormData): Promise<
       })
   }
 
-  if (isCorrect) {
-    revalidatePath(`/challenge/${chapterSlug}`)
-    return { success: true, message: `Correct! +${challenge.points} pts` }
+  if (!isCorrect) {
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+    return { success: false, message: "Wrong flag, try again" }
   }
-
-  return { success: false, message: "Wrong flag, try again" }
+    
+  revalidatePath(`/challenge/${chapterSlug}`)
+  return { success: true, message: `Correct! +${challenge.points} pts` }
 }

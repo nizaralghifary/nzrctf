@@ -23,11 +23,11 @@ export default function Login() {
     let loginEmail = emailOrUsername.trim()
 
     if (!loginEmail.includes("@")) {
-      const { data, error } = await supabase
+      const { data, error: rpcError } = await supabase
         .rpc("get_email_by_username", { p_username: loginEmail })
 
-      if (!data) {
-        setError("Username not found")
+      if (rpcError || !data) {
+        setError("Invalid username or password")
         setLoading(false)
         return
       }
@@ -35,17 +35,17 @@ export default function Login() {
       loginEmail = data
     }
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const { error: signInError } = await supabase.auth.signInWithPassword({
       email: loginEmail,
       password,
     })
 
-    if (error) {
-      setError(error.message)
+    if (signInError) {
+      setError("Invalid username or password")
       setLoading(false)
       return
     }
-
+    
     router.push("/lab")
     router.refresh()
   }
