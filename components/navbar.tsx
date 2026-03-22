@@ -83,10 +83,13 @@ export default function Navbar({ username, email, totalPoints = 0, isLoggedIn, l
               Submissions
             </Link>
             <div className="w-px h-4 bg-[#1e1e2e]" />
-            <div className="flex items-center gap-1.5 font-mono text-xs">
-              <User size={12} className="text-[#00ff88]" />
-              <span className="text-white">{displayName}</span>
-            </div>
+            <Link
+              href="/account"
+              className={`flex items-center gap-1.5 font-mono text-xs transition-colors ${pathname.startsWith("/account") ? "text-[#00ff88]" : "text-[#555570] hover:text-white"}`}
+            >
+              <User size={12} className={pathname.startsWith("/account") ? "text-[#00ff88]" : "text-[#00ff88]"} />
+              <span>{displayName}</span>
+            </Link>
             <div className="flex items-center gap-1.5 text-[#00ff88] font-mono text-xs font-bold">
               <Trophy size={12} />
               <span>{totalPoints} pts</span>
@@ -157,9 +160,12 @@ export default function Navbar({ username, email, totalPoints = 0, isLoggedIn, l
         {isLoggedIn ? (
           <>
             <div className="px-5 py-4 border-b border-[#1e1e2e]">
-              <div
+              <Link
+                href="/account"
                 style={{ clipPath: "polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%)" }}
-                className="bg-[#11111a] border border-[#1e1e2e] px-4 py-3"
+                className={`block bg-[#11111a] border px-4 py-3 transition-all ${
+                  pathname.startsWith("/account") ? "border-[#00ff88]/30" : "border-[#1e1e2e] hover:border-[#333355]"
+                }`}
               >
                 <div className="flex items-center gap-2.5 mb-2">
                   <div
@@ -168,18 +174,19 @@ export default function Navbar({ username, email, totalPoints = 0, isLoggedIn, l
                   >
                     <User size={14} className="text-[#00ff88]" />
                   </div>
-                  <div className="min-w-0">
+                  <div className="min-w-0 flex-1">
                     <div className="text-white font-bold text-sm font-mono truncate">{displayName}</div>
                     {email && username && (
                       <div className="text-[#555570] font-mono text-xs truncate">{email}</div>
                     )}
                   </div>
+                  <ChevronRight size={13} className="text-[#555570] shrink-0" />
                 </div>
                 <div className="flex items-center gap-1.5 text-[#00ff88] font-mono text-xs font-bold">
                   <Trophy size={11} />
                   <span>{totalPoints} pts</span>
                 </div>
-              </div>
+              </Link>
             </div>
 
             <div className="flex-1 px-4 py-4 flex flex-col gap-1.5 overflow-y-auto">

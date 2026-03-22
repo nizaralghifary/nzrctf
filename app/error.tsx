@@ -37,22 +37,6 @@ export default function Error({
           An unexpected error occurred. Try again or go back to home.
         </p>
 
-        <div
-          style={{ clipPath: "polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px))" }}
-          className="bg-[#11111a] border border-[#1e1e2e] p-4 mb-6 text-left"
-        >
-          <p className="text-[#333355] font-mono text-xs mb-1">// debug info</p>
-          <p className="text-[#555570] font-mono text-xs">
-            <span className="text-[#ff3c6e]">Error:</span>{" "}
-            <span className="break-all">{error.message || "Unknown error"}</span>
-          </p>
-          {error.digest && (
-            <p className="text-[#555570] font-mono text-xs mt-1">
-              <span className="text-[#ffd700]">Digest:</span> {error.digest}
-            </p>
-          )}
-        </div>
-
         <div className="flex items-center justify-center gap-3 flex-wrap">
           <button
             onClick={reset}
