@@ -1,6 +1,8 @@
 import { redirect } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
 import NavbarServer from "@/components/navbar-server"
+import SubmissionDate from "@/components/submission-date"
+import SubmissionFlag from "@/components/submission-flag"
 import {
   CheckCircle,
   XCircle,
@@ -114,16 +116,6 @@ export default async function SubmissionsPage() {
 
               const cat = categoryConfig[challenge.category]
               const Icon = cat?.icon ?? Database
-              const date = new Date(submission.submitted_at)
-              const formatted = date.toLocaleDateString("en-US", {
-                month: "short",
-                day: "numeric",
-                year: "numeric",
-              })
-              const time = date.toLocaleTimeString("en-US", {
-                hour: "2-digit",
-                minute: "2-digit",
-              })
 
               return (
                 <div
@@ -178,16 +170,13 @@ export default async function SubmissionsPage() {
                         </span>
                       </div>
 
-                      <div
-                        style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 0 100%)" }}
-                        className="inline-block bg-[#0a0a0f] border border-[#1e1e2e] px-2 py-0.5 font-mono text-xs text-[#555570] tracking-wider mb-2"
-                      >
-                        {submission.submitted_flag}
+                      <div className="mb-2">
+                        <SubmissionFlag flag={submission.submitted_flag} />
                       </div>
 
                       <div className="flex items-center gap-1.5 text-[#333355] font-mono text-xs">
                         <Clock size={10} />
-                        {formatted} at {time}
+                        <SubmissionDate dateString={submission.submitted_at} />
                       </div>
                     </div>
                   </div>
@@ -196,7 +185,6 @@ export default async function SubmissionsPage() {
             })}
           </div>
         )}
-
       </main>
     </div>
   )

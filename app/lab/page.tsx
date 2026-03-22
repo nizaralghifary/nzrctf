@@ -177,7 +177,6 @@ export default async function Lab() {
             })}
           </div>
         </div>
-
       </main>
     </div>
   )

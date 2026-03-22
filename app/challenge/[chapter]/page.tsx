@@ -1,13 +1,10 @@
 import { redirect, notFound } from "next/navigation"
 import Link from "next/link"
 import { createClient } from "@/lib/supabase/server"
-import { logout } from "@/lib/actions/auth"
 import SubmitForm from "./submit-form"
 import ProgressBar from "@/components/progress-bar"
 import NavbarServer from "@/components/navbar-server"
 import {
-  User,
-  Trophy,
   CheckCircle,
   ExternalLink,
   Database,
@@ -89,12 +86,6 @@ export default async function ChapterPage({
 
   if (!user) redirect("/login")
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("username")
-    .eq("id", user.id)
-    .single()
-
   const { data: challenges } = await supabase
     .from("challenges")
     .select("id, title, description, difficulty, points, url, chapter, stage_order, is_active")
@@ -114,11 +105,6 @@ export default async function ChapterPage({
   const chapterSolved = challenges?.filter((c) => solvedIds.has(c.id)).length ?? 0
   const chapterTotal = challenges?.length ?? 0
   const percentage = chapterTotal > 0 ? Math.round((chapterSolved / chapterTotal) * 100) : 0
-
-  const totalPoints =
-    challenges
-      ?.filter((c) => solvedIds.has(c.id))
-      .reduce((sum, c) => sum + c.points, 0) ?? 0
 
   const Icon = config.icon
 
