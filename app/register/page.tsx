@@ -21,26 +21,16 @@ export default function Register() {
     setLoading(true)
     setError("")
 
-    if (username.trim().length < 3) {
-      setError("Username must be at least 3 characters")
+    const usernameRegex = /^[a-zA-Z0-9]{3,10}$/
+    if (!usernameRegex.test(username.trim())) {
+      setError("Username only allows letters and numbers (3-10 characters)")
       setLoading(false)
       return
     }
 
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters")
-      setLoading(false)
-      return
-    }
-
-    const { data: existingUsername } = await supabase
-      .from("profiles")
-      .select("username")
-      .eq("username", username.trim())
-      .single()
-
-    if (existingUsername) {
-      setError("Username is already taken, please choose another")
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/
+    if (!passwordRegex.test(password)) {
+      setError("Password must be at least 8 characters, include uppercase, lowercase, and a number")
       setLoading(false)
       return
     }
@@ -57,7 +47,8 @@ export default function Register() {
       if (signUpError.message.toLowerCase().includes("username")) {
         setError("Username is already taken, please choose another")
       } else {
-        setError(signUpError.message)
+        //setError(signUpError.message)
+        setError("Failed to create account, please try again later")
       }
       setLoading(false)
       return
@@ -102,7 +93,7 @@ export default function Register() {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
-                placeholder="h4ck3r_name"
+                placeholder="h4ck3r"
                 className="w-full bg-[#0a0a0f] border border-[#1e1e2e] text-white font-mono text-sm px-3 py-2.5 focus:outline-none focus:border-[#00ff88] focus:ring-1 focus:ring-[#00ff88]/20 transition-all placeholder:text-[#333350]"
               />
             </div>
@@ -116,7 +107,7 @@ export default function Register() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                placeholder="hacker@ctf.com"
+                placeholder="h4ck3r@h4cker.com"
                 className="w-full bg-[#0a0a0f] border border-[#1e1e2e] text-white font-mono text-sm px-3 py-2.5 focus:outline-none focus:border-[#00ff88] focus:ring-1 focus:ring-[#00ff88]/20 transition-all placeholder:text-[#333350]"
               />
             </div>
@@ -130,7 +121,7 @@ export default function Register() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                placeholder="min. 6 characters"
+                placeholder="e.g. HackerPass123"
                 className="w-full bg-[#0a0a0f] border border-[#1e1e2e] text-white font-mono text-sm px-3 py-2.5 focus:outline-none focus:border-[#00ff88] focus:ring-1 focus:ring-[#00ff88]/20 transition-all placeholder:text-[#333350]"
               />
             </div>

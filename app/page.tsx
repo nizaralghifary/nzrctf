@@ -77,7 +77,7 @@ export default async function Home() {
       .select("username")
       .eq("id", user.id)
       .single()
-    profile = data
+    profile = data ? { username: data.username } : null
   }
 
   return (

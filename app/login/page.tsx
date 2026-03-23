@@ -1,15 +1,11 @@
 "use client"
 
 import { useState } from "react"
-import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { createClient } from "@/lib/supabase/client"
+import { login } from "@/lib/actions/auth"
 import { ChevronRight, AlertTriangle } from "lucide-react"
 
 export default function Login() {
-  const router = useRouter()
-  const supabase = createClient()
-
   const [emailOrUsername, setEmailOrUsername] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
@@ -20,34 +16,12 @@ export default function Login() {
     setLoading(true)
     setError("")
 
-    let loginEmail = emailOrUsername.trim()
+    const result = await login(emailOrUsername, password)
 
-    if (!loginEmail.includes("@")) {
-      const { data, error: rpcError } = await supabase
-        .rpc("get_email_by_username", { p_username: loginEmail })
-
-      if (rpcError || !data) {
-        setError("Invalid username or password")
-        setLoading(false)
-        return
-      }
-
-      loginEmail = data
-    }
-
-    const { error: signInError } = await supabase.auth.signInWithPassword({
-      email: loginEmail,
-      password,
-    })
-
-    if (signInError) {
-      setError("Invalid username or password")
+    if (result?.error) {
+      setError(result.error)
       setLoading(false)
-      return
     }
-    
-    router.push("/lab")
-    router.refresh()
   }
 
   return (
@@ -79,7 +53,7 @@ export default function Login() {
                 value={emailOrUsername}
                 onChange={(e) => setEmailOrUsername(e.target.value)}
                 required
-                placeholder="hacker@ctf.com or h4ck3r_name"
+                placeholder="h4ck3r@h4cker.com or h4ck3r"
                 className="w-full bg-[#0a0a0f] border border-[#1e1e2e] text-white font-mono text-sm px-3 py-2.5 focus:outline-none focus:border-[#00ff88] focus:ring-1 focus:ring-[#00ff88]/20 transition-all placeholder:text-[#333350]"
               />
             </div>
