@@ -10,58 +10,71 @@ import {
   LayoutDashboard,
   Flag,
   Trophy,
-  ChevronRight,
-  MoveRight
+  ArrowRight,
+  Zap,
 } from "lucide-react"
+
+const CUT = "polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px))"
+const CUT_SM = "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))"
+const CUT_BTN = "polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%)"
+const CUT_BADGE = "polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 0 100%)"
 
 const features = [
   {
     icon: Database,
     title: "SQL Injection",
-    description: "Bypass login panels, extract database contents, and exploit poorly sanitized queries.",
-    difficultyFrom: "Easy",
-    difficultyTo: "Hard",
-    color: "text-[#ff3c6e]",
-    border: "border-[#ff3c6e]/40",
-    badge: "text-[#ff3c6e] border-[#ff3c6e]/30 bg-[#ff3c6e]/10",
+    description: "Bypass login panels, dump database contents, exploit unsanitized queries. Classic but never gets old.",
+    accent: "#ff3c6e",
+    bg: "#fff0f3",
   },
   {
     icon: Code2,
     title: "Cross-Site Scripting",
-    description: "Inject malicious scripts, steal cookies, and hijack user sessions.",
-    difficultyFrom: "Easy",
-    difficultyTo: "Hard",
-    color: "text-[#ffd700]",
-    border: "border-[#ffd700]/40",
-    badge: "text-[#ffd700] border-[#ffd700]/30 bg-[#ffd700]/10",
+    description: "Inject scripts, steal cookies, hijack sessions. The browser is your playground.",
+    accent: "#e6c200",
+    bg: "#fffbe0",
   },
   {
     icon: ShieldOff,
     title: "Broken Access Control",
-    description: "Access resources you shouldn't, manipulate object references, and escalate privileges.",
-    difficultyFrom: "Medium",
-    difficultyTo: "Hard",
-    color: "text-[#00bfff]",
-    border: "border-[#00bfff]/40",
-    badge: "text-[#00bfff] border-[#00bfff]/30 bg-[#00bfff]/10",
+    description: "Touch things you're not supposed to. Manipulate references, escalate privileges, go where you shouldn't.",
+    accent: "#0066ff",
+    bg: "#eef3ff",
   },
   {
     icon: Globe,
     title: "SSRF / LFI / XXE",
-    description: "Reach internal services, read sensitive files, and exploit XML parsers.",
-    difficultyFrom: "Medium",
-    difficultyTo: "Hard",
-    color: "text-[#bf5fff]",
-    border: "border-[#bf5fff]/40",
-    badge: "text-[#bf5fff] border-[#bf5fff]/30 bg-[#bf5fff]/10",
+    description: "Hit internal services, read sensitive files, bend XML parsers to your will.",
+    accent: "#9900cc",
+    bg: "#f8eeff",
   },
 ]
 
 const steps = [
-  { num: "01", icon: UserPlus, title: "Create an account", desc: "Register with your username, email, and password." },
-  { num: "02", icon: LayoutDashboard, title: "Pick a challenge", desc: "Browse challenges across 4 web security categories." },
-  { num: "03", icon: Flag, title: "Find the flag", desc: "Exploit the vulnerability and retrieve the hidden flag." },
-  { num: "04", icon: Trophy, title: "Submit & score", desc: "Submit your flag to earn points and climb the leaderboard." },
+  {
+    num: "01",
+    icon: UserPlus,
+    title: "Make an account",
+    desc: "Pick a username, drop your email, set a password. That's it.",
+  },
+  {
+    num: "02",
+    icon: LayoutDashboard,
+    title: "Pick a challenge",
+    desc: "Four categories of web security chaos. Start wherever you want.",
+  },
+  {
+    num: "03",
+    icon: Flag,
+    title: "Hunt the flag",
+    desc: "Find the vulnerability, exploit it, grab the hidden flag.",
+  },
+  {
+    num: "04",
+    icon: Trophy,
+    title: "Submit & score",
+    desc: "Drop the flag, collect points, climb the board.",
+  },
 ]
 
 export default async function Home() {
@@ -81,97 +94,124 @@ export default async function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] text-white">
-      <NavbarServer />      
+    <div
+      className="min-h-screen bg-[#f4efe4] text-[#111]"
+      style={{ fontFamily: "'Arial Black', 'Haettenschweiler', Impact, sans-serif" }}
+    >
+      <NavbarServer />
 
-      <section className="max-w-4xl mx-auto px-6 pt-20 pb-16 text-center">
+      <section className="max-w-5xl mx-auto px-5 pt-16 pb-12">
         <div
-          style={{ clipPath: "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))" }}
-          className="inline-block bg-[#00ff88]/10 border border-[#00ff88]/30 text-[#00ff88] font-mono text-xs px-4 py-1.5 mb-6 tracking-widest uppercase"
+          className="bg-white border-4 border-black shadow-[10px_10px_0_#111] p-8 md:p-12 relative overflow-hidden"
+          style={{ clipPath: CUT }}
         >
-          Web Security CTF Platform
-        </div>
-        <h1 className="text-4xl sm:text-5xl font-black leading-tight mb-6">
-          Learn Web Security<br />
-          <span className="text-[#00ff88]">By Breaking Things</span>
-        </h1>
-        <p className="text-[#555570] font-mono text-sm max-w-lg mx-auto leading-relaxed mb-10">
-          A hands-on CTF platform built for learning real-world web vulnerabilities.
-          Exploit, find the flag, and level up your security skills.
-        </p>
-        <div className="flex items-center justify-center gap-3 flex-wrap">
-          <Link
-            href={user ? "/lab" : "/register"}
-            style={{ clipPath: "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%)" }}
-            className="bg-[#00ff88] text-black font-bold text-sm px-6 py-3 hover:opacity-90 active:scale-[0.98] transition-all flex items-center gap-2"
-          >
-            {user ? "Go to Lab" : "Start Hacking"} <ChevronRight size={14} />
-          </Link>
-          {!user && (
-            <Link
-              href="/login"
-              style={{ clipPath: "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%)" }}
-              className="bg-[#11111a] border border-[#1e1e2e] text-white font-bold text-sm px-6 py-3 hover:border-[#333355] transition-all"
-            >
-              Sign In
-            </Link>
-          )}
-        </div>
+          <div className="absolute top-0 right-0 w-0 h-0 border-t-[72px] border-r-[72px] border-t-[#00e676] border-r-transparent" />
 
-        <div className="flex items-center justify-center gap-6 mt-14 flex-wrap">
-          {[
-            { val: "4", label: "Categories" },
-            { val: "7+", label: "Challenges" },
-            { val: "3", label: "Difficulty Levels" },
-            { val: "∞", label: "Things to Learn" },
-          ].map((stat) => (
-            <div
-              key={stat.label}
-              style={{ clipPath: "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%)" }}
-              className="bg-[#11111a] border border-[#1e1e2e] px-5 py-3 text-center"
+          <div
+            className="inline-block bg-[#00e676] border-2 border-black px-3 py-1 text-xs font-black uppercase tracking-widest mb-7"
+            style={{ fontFamily: "monospace", clipPath: CUT_BADGE, transform: "rotate(-1.2deg)" }}
+          >
+            Web Security CTF Platform
+          </div>
+
+          <h1
+            className="text-5xl md:text-7xl font-black uppercase leading-none mb-6 tracking-tight"
+            style={{ fontFamily: "'Arial Black', Impact, sans-serif", lineHeight: 0.92 }}
+          >
+            Learn Security
+            <br />
+            <span
+              className="bg-black text-white px-2 py-1"
+              style={{ display: "inline-block", transform: "skewX(-2deg)", clipPath: CUT_BTN }}
             >
-              <div className="text-xl font-black text-[#00ff88] font-mono">{stat.val}</div>
-              <div className="text-[#555570] font-mono text-xs mt-0.5">{stat.label}</div>
-            </div>
-          ))}
+              By Breaking
+            </span>
+            <br />
+            Stuff
+          </h1>
+
+          <p
+            className="text-[15px] font-bold text-[#444] max-w-lg mt-4 mb-9 leading-snug"
+            style={{ fontFamily: "'Courier New', monospace" }}
+          >
+            A hands-on CTF platform for real web vulnerabilities. No slides,
+            no theory. Just you, a broken app, and a flag to find.
+          </p>
+
+          <div className="flex flex-wrap gap-3">
+            <Link
+              href={user ? "/lab" : "/register"}
+              className="inline-flex items-center gap-2 bg-[#00e676] border-4 border-black text-black font-black text-sm px-6 py-3 uppercase tracking-wide shadow-[5px_5px_0_#111] hover:shadow-[2px_2px_0_#111] hover:translate-x-[3px] hover:translate-y-[3px] transition-all active:shadow-none active:translate-x-[5px] active:translate-y-[5px]"
+              style={{ clipPath: CUT_BTN }}
+            >
+              {user ? "Go to Lab" : "Start Hacking"} <ArrowRight size={16} strokeWidth={3} />
+            </Link>
+            {!user && (
+              <Link
+                href="/login"
+                className="inline-flex items-center gap-2 bg-white border-4 border-black text-black font-black text-sm px-6 py-3 uppercase tracking-wide shadow-[5px_5px_0_#111] hover:shadow-[2px_2px_0_#111] hover:translate-x-[3px] hover:translate-y-[3px] transition-all"
+                style={{ clipPath: CUT_BTN }}
+              >
+                Sign In
+              </Link>
+            )}
+          </div>
+
+          <div className="flex flex-wrap mt-10 border-t-4 border-black pt-6">
+            {[
+              { val: "4",  label: "Categories"      },
+              { val: "7+", label: "Challenges"      },
+              { val: "3",  label: "Difficulties"    },
+              { val: "∞",  label: "Things to Learn" },
+            ].map((s, i) => (
+              <div
+                key={s.label}
+                className={`px-6 py-3 text-center ${i < 3 ? "border-r-4 border-black" : ""}`}
+              >
+                <div className="text-3xl font-black" style={{ fontFamily: "'Arial Black', Impact, sans-serif" }}>
+                  {s.val}
+                </div>
+                <div className="text-xs font-bold uppercase tracking-widest text-[#666] mt-0.5" style={{ fontFamily: "monospace" }}>
+                  {s.label}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
-      <div className="border-t border-[#1e1e2e]" />
-      <section className="max-w-4xl mx-auto px-6 py-16">
-        <p className="text-[#555570] font-mono text-xs tracking-widest uppercase mb-2">
-          Challenge Categories
-        </p>
-        <h2 className="text-2xl font-black mb-8">What You&apos;ll Be Exploiting</h2>
-        <div className="grid sm:grid-cols-2 gap-3">
+      <section className="max-w-5xl mx-auto px-5 py-10">
+        <div className="flex items-center gap-3 mb-7">
+          <div className="w-4 h-9 bg-black" />
+          <div>
+            <p className="text-xs font-black uppercase tracking-widest text-[#888] mb-0.5" style={{ fontFamily: "monospace" }}>
+              Challenge Categories
+            </p>
+            <h2 className="text-3xl font-black uppercase tracking-tight leading-none" style={{ fontFamily: "'Arial Black', Impact, sans-serif" }}>
+              What You'll Break
+            </h2>
+          </div>
+        </div>
+
+        <div className="grid sm:grid-cols-2 gap-5">
           {features.map((f) => {
             const Icon = f.icon
             return (
               <div
                 key={f.title}
-                style={{
-                  clipPath: "polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px))",
-                }}
-                className={`bg-[#11111a] border p-5 transition-all ${f.border} hover:shadow-[0_0_16px_rgba(0,0,0,0.3)]`}
+                className="border-4 border-black p-5 shadow-[6px_6px_0_#111] hover:shadow-[3px_3px_0_#111] hover:translate-x-[3px] hover:translate-y-[3px] transition-all cursor-default"
+                style={{ backgroundColor: f.bg, clipPath: CUT }}
               >
-                <div className="flex items-start justify-between gap-3 mb-3">
-                  <div className="flex items-center gap-2">
-                    <div
-                      style={{ clipPath: "polygon(0 0, calc(100% - 5px) 0, 100% 5px, 100% 100%, 0 100%)" }}
-                      className={`w-7 h-7 flex items-center justify-center bg-[#0a0a0f] border ${f.border}`}
-                    >
-                      <Icon size={14} className={f.color} />
-                    </div>
-                    <span className="font-bold text-sm">{f.title}</span>
-                  </div>
-                  <span
-                    style={{ clipPath: "polygon(0 0, calc(100% - 5px) 0, 100% 5px, 100% 100%, 0 100%)" }}
-                    className={`text-xs font-mono border px-2 py-0.5 shrink-0 flex items-center gap-1 ${f.badge}`}
+                <div className="flex items-center gap-2 mb-3">
+                  <div
+                    className="w-9 h-9 flex items-center justify-center shrink-0"
+                    style={{ backgroundColor: f.accent, border: "3px solid #111", clipPath: CUT_SM }}
                   >
-                    {f.difficultyFrom} <MoveRight size={10} /> {f.difficultyTo}
-                  </span>
+                    <Icon size={16} color="#fff" strokeWidth={2.5} />
+                  </div>
+                  <span className="font-black text-sm uppercase tracking-wide">{f.title}</span>
                 </div>
-                <p className="text-[#555570] font-mono text-xs leading-relaxed">
+                <p className="text-sm text-[#333] leading-snug" style={{ fontFamily: "'Courier New', monospace", fontWeight: 600 }}>
                   {f.description}
                 </p>
               </div>
@@ -180,32 +220,42 @@ export default async function Home() {
         </div>
       </section>
 
-      <div className="border-t border-[#1e1e2e]" />
-      <section className="max-w-4xl mx-auto px-6 py-16">
-        <p className="text-[#555570] font-mono text-xs tracking-widest uppercase mb-2">
-          How It Works
-        </p>
-        <h2 className="text-2xl font-black mb-8">Four Steps to Your First Flag</h2>
-        <div className="grid sm:grid-cols-2 gap-3">
+      <section className="max-w-5xl mx-auto px-5 py-10">
+        <div className="flex items-center gap-3 mb-7">
+          <div className="w-4 h-9 bg-[#00e676] border-r-4 border-black" />
+          <div>
+            <p className="text-xs font-black uppercase tracking-widest text-[#888] mb-0.5" style={{ fontFamily: "monospace" }}>
+              How It Works
+            </p>
+            <h2 className="text-3xl font-black uppercase tracking-tight leading-none" style={{ fontFamily: "'Arial Black', Impact, sans-serif" }}>
+              Four Steps to Your First Flag
+            </h2>
+          </div>
+        </div>
+
+        <div className="grid sm:grid-cols-2 gap-5">
           {steps.map((s) => {
             const Icon = s.icon
             return (
               <div
                 key={s.num}
-                style={{
-                  clipPath: "polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px))",
-                }}
-                className="bg-[#11111a] border border-[#1e1e2e] p-5 flex gap-4"
+                className="bg-white border-4 border-black p-5 flex gap-4 shadow-[6px_6px_0_#111] hover:shadow-[3px_3px_0_#111] hover:translate-x-[3px] hover:translate-y-[3px] transition-all"
+                style={{ clipPath: CUT }}
               >
-                <span className="text-[#00ff88] font-black font-mono text-2xl leading-none shrink-0">
+                <span
+                  className="text-5xl font-black leading-none shrink-0 select-none"
+                  style={{ fontFamily: "'Arial Black', Impact, sans-serif", color: "#e8e2d8", WebkitTextStroke: "2px #111" }}
+                >
                   {s.num}
                 </span>
                 <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <Icon size={14} className="text-[#00ff88]" />
-                    <span className="font-bold text-sm">{s.title}</span>
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <Icon size={15} strokeWidth={2.5} />
+                    <span className="font-black text-sm uppercase tracking-wide">{s.title}</span>
                   </div>
-                  <p className="text-[#555570] font-mono text-xs leading-relaxed">{s.desc}</p>
+                  <p className="text-sm text-[#555] leading-snug" style={{ fontFamily: "'Courier New', monospace", fontWeight: 600 }}>
+                    {s.desc}
+                  </p>
                 </div>
               </div>
             )
@@ -213,27 +263,41 @@ export default async function Home() {
         </div>
       </section>
 
-      <div className="border-t border-[#1e1e2e]" />
-      <section className="max-w-4xl mx-auto px-6 py-16 text-center">
-        <h2 className="text-2xl font-black mb-3">Ready to Start?</h2>
-        <p className="text-[#555570] font-mono text-xs mb-8">
-          Create a free account and start solving challenges right away.
-        </p>
-        <Link
-          href={user ? "/lab" : "/register"}
-          style={{ clipPath: "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%)" }}
-          className="inline-flex items-center gap-2 bg-[#00ff88] text-black font-bold text-sm px-8 py-3 hover:opacity-90 active:scale-[0.98] transition-all"
+      <section className="max-w-5xl mx-auto px-5 py-10 pb-20">
+        <div
+          className="border-4 border-black bg-[#00e676] p-10 text-center shadow-[10px_10px_0_#111]"
+          style={{ clipPath: CUT }}
         >
-          {user ? "Go to Lab" : "Create Account"} <ChevronRight size={14} />
-        </Link>
+          <div
+            className="inline-flex items-center justify-center w-14 h-14 bg-black border-4 border-black mb-5"
+            style={{ clipPath: CUT_SM }}
+          >
+            <Zap size={26} color="#00e676" strokeWidth={3} />
+          </div>
+          <h2
+            className="text-4xl md:text-5xl font-black uppercase mb-3 tracking-tight text-black"
+            style={{ fontFamily: "'Arial Black', Impact, sans-serif", lineHeight: 0.95 }}
+          >
+            Ready to Start?
+          </h2>
+          <p className="text-sm mb-8 text-[#1a4a2a]" style={{ fontFamily: "'Courier New', monospace", fontWeight: 600 }}>
+            Free account. No credit card. Just a browser and curiosity.
+          </p>
+          <Link
+            href={user ? "/lab" : "/register"}
+            className="inline-flex items-center gap-2 bg-black border-4 border-black text-white font-black text-sm px-8 py-3 uppercase tracking-wide shadow-[5px_5px_0_#1a4a2a] hover:shadow-[2px_2px_0_#1a4a2a] hover:translate-x-[3px] hover:translate-y-[3px] transition-all"
+            style={{ clipPath: CUT_BTN }}
+          >
+            {user ? "Go to Lab" : "Create Free Account"} <ArrowRight size={16} strokeWidth={3} />
+          </Link>
+        </div>
       </section>
 
-      <div className="border-t border-[#1e1e2e] px-6 py-6 text-center">
-        <span className="text-[#333350] font-mono text-xs">
+      <footer className="border-t-4 border-black bg-white px-6 py-5 text-center">
+        <span className="text-xs font-black uppercase tracking-widest text-[#bbb]" style={{ fontFamily: "monospace" }}>
           NzrCTF Lab — Web Security Challenge Platform
         </span>
-      </div>
-
+      </footer>
     </div>
   )
 }

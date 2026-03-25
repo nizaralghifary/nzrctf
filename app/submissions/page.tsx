@@ -13,16 +13,22 @@ import {
   Clock,
 } from "lucide-react"
 
+const CUT = "polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px))"
+const CUT_SM = "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))"
+const CUT_BTN = "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%)"
+
+const navFont = { fontFamily: "'Arial Black', Impact, sans-serif" }
+const monoFont = { fontFamily: "'Courier New', monospace" }
+
 const categoryConfig: Record<string, {
   label: string
   icon: React.ElementType
-  color: string
-  border: string
+  accent: string
 }> = {
-  sqli: { label: "SQL Injection", icon: Database, color: "text-[#ff3c6e]", border: "border-[#ff3c6e]/40" },
-  xss:  { label: "XSS",          icon: Code2,     color: "text-[#ffd700]", border: "border-[#ffd700]/40" },
-  idor: { label: "IDOR",         icon: ShieldOff,  color: "text-[#00bfff]", border: "border-[#00bfff]/40" },
-  ssrf: { label: "SSRF / LFI",   icon: Globe,      color: "text-[#bf5fff]", border: "border-[#bf5fff]/40" },
+  sqli: { label: "SQL Injection", icon: Database,  accent: "#ff3c6e" },
+  xss:  { label: "XSS",           icon: Code2,     accent: "#e6c200" },
+  idor: { label: "IDOR",          icon: ShieldOff, accent: "#0066ff" },
+  ssrf: { label: "SSRF / LFI",    icon: Globe,     accent: "#9900cc" },
 }
 
 type ChallengeJoin = {
@@ -34,7 +40,7 @@ type ChallengeJoin = {
   stage_order: number
 }
 
-export default async function SubmissionsPage() {
+export default async function Submissions() {
   const supabase = await createClient()
 
   const {
@@ -63,49 +69,60 @@ export default async function SubmissionsPage() {
     .order("submitted_at", { ascending: false })
 
   const totalAttempts = submissions?.length ?? 0
-  const correctCount = submissions?.filter((s) => s.is_correct).length ?? 0
-  const wrongCount = totalAttempts - correctCount
+  const correctCount  = submissions?.filter((s) => s.is_correct).length ?? 0
+  const wrongCount    = totalAttempts - correctCount
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] text-white">
+    <div className="min-h-screen bg-[#f4efe4] text-black" style={navFont}>
       <NavbarServer />
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
 
         <div className="mb-8">
-          <p className="text-[#555570] font-mono text-xs tracking-widest mb-1">
-            My Submissions
-          </p>
-          <h1 className="text-2xl font-black mb-4">Submission History</h1>
-
-          <div className="flex flex-wrap gap-3">
-            {[
-              { val: totalAttempts, label: "TOTAL",   color: "text-white",      accent: "border-[#1e1e2e]" },
-              { val: correctCount,  label: "CORRECT",  color: "text-[#00ff88]",  accent: "border-[#00ff88]/20" },
-              { val: wrongCount,    label: "WRONG",    color: "text-[#ff3c6e]",  accent: "border-[#ff3c6e]/20" },
-            ].map((stat) => (
-              <div
-                key={stat.label}
-                style={{ clipPath: "polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%)" }}
-                className={`bg-[#11111a] border ${stat.accent} px-5 py-3 text-center`}
-              >
-                <div className={`${stat.color} font-black font-mono text-xl`}>{stat.val}</div>
-                <div className="text-[#555570] font-mono text-xs">{stat.label}</div>
-              </div>
-            ))}
+          <div
+            className="bg-white border-4 border-black shadow-[8px_8px_0_#111] p-6 relative overflow-hidden"
+            style={{ clipPath: CUT }}
+          >
+            <div className="absolute top-0 right-0 w-0 h-0 border-t-[48px] border-r-[48px] border-t-[#00e676] border-r-transparent" />
+            <p className="text-xs font-black tracking-widest text-[#888] mb-1" style={monoFont}>
+              My Submissions
+            </p>
+            <h1 className="text-2xl font-black mb-5" style={navFont}>
+              Submission History
+            </h1>
+            <div className="flex flex-wrap gap-3">
+              {[
+                { val: totalAttempts, label: "Total",   bg: "#f4efe4" },
+                { val: correctCount,  label: "Correct", bg: "#00e676" },
+                { val: wrongCount,    label: "Wrong",   bg: "#ff3c6e" },
+              ].map((stat) => (
+                <div
+                  key={stat.label}
+                  className="px-5 py-3 text-center border-4 border-black"
+                  style={{ clipPath: CUT_BTN, backgroundColor: stat.bg }}
+                >
+                  <div className="font-black text-xl text-black" style={navFont}>{stat.val}</div>
+                  <div className="text-xs font-black uppercase tracking-widest text-[#444] mt-0.5" style={monoFont}>
+                    {stat.label}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
         {submissions?.length === 0 ? (
           <div
-            style={{ clipPath: "polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px))" }}
-            className="bg-[#11111a] border border-[#1e1e2e] p-10 text-center"
+            className="bg-white border-4 border-black p-10 text-center shadow-[6px_6px_0_#111]"
+            style={{ clipPath: CUT }}
           >
-            <p className="text-[#555570] font-mono text-sm">No submissions yet.</p>
-            <p className="text-[#333355] font-mono text-xs mt-1">Start solving challenges to see your history here.</p>
+            <p className="font-black uppercase text-sm text-[#888]" style={monoFont}>No submissions yet.</p>
+            <p className="text-xs font-bold mt-1 text-[#bbb]" style={monoFont}>
+              Start solving challenges to see your history here.
+            </p>
           </div>
         ) : (
-          <div className="grid gap-3">
+          <div className="grid gap-4">
             {submissions?.map((submission) => {
               const raw = submission.challenges
               const challenge: ChallengeJoin | null = Array.isArray(raw)
@@ -114,58 +131,65 @@ export default async function SubmissionsPage() {
 
               if (!challenge) return null
 
-              const cat = categoryConfig[challenge.category]
+              const cat  = categoryConfig[challenge.category]
               const Icon = cat?.icon ?? Database
+              const correct = submission.is_correct
 
               return (
                 <div
                   key={submission.id}
-                  style={{
-                    clipPath: "polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px))",
-                  }}
-                  className={`bg-[#11111a] border p-4 sm:p-5 transition-all ${
-                    submission.is_correct ? "border-[#00ff88]/20" : "border-[#ff3c6e]/15"
-                  }`}
+                  className="bg-white border-4 border-black p-4 sm:p-5 shadow-[4px_4px_0_#111]"
+                  style={{ clipPath: CUT }}
                 >
                   <div className="flex items-start gap-4">
-
                     <div
-                      style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 0 100%)" }}
-                      className={`shrink-0 w-10 h-10 flex items-center justify-center bg-[#0a0a0f] border ${
-                        submission.is_correct ? "border-[#00ff88]/30" : "border-[#ff3c6e]/20"
-                      }`}
+                      className="shrink-0 w-10 h-10 flex items-center justify-center border-4 border-black"
+                      style={{
+                        clipPath: CUT_SM,
+                        backgroundColor: correct ? "#00e676" : "#ff3c6e",
+                      }}
                     >
-                      {submission.is_correct
-                        ? <CheckCircle size={16} className="text-[#00ff88]" />
-                        : <XCircle size={16} className="text-[#ff3c6e]" />
+                      {correct
+                        ? <CheckCircle size={16} color="#111" strokeWidth={2.5} />
+                        : <XCircle    size={16} color="#fff" strokeWidth={2.5} />
                       }
                     </div>
 
                     <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2 flex-wrap mb-1">
-                        <span className="font-bold text-sm">{challenge.title}</span>
-                        <span
-                          style={{ clipPath: "polygon(0 0, calc(100% - 5px) 0, 100% 5px, 100% 100%, 0 100%)" }}
-                          className={`text-xs font-mono px-2 py-0.5 bg-[#0a0a0f] border flex items-center gap-1 ${cat?.border ?? "border-[#1e1e2e]"} ${cat?.color ?? "text-white"}`}
-                        >
-                          <Icon size={10} />
-                          {cat?.label ?? challenge.category.toUpperCase()}
+                      <div className="flex items-center gap-2 flex-wrap mb-1.5">
+                        <span className="font-black text-sm" style={navFont}>
+                          {challenge.title}
                         </span>
+                        {cat && (
+                          <span
+                            className="text-xs font-black uppercase px-1.5 py-0.5 border-2 border-black flex items-center gap-1"
+                            style={{ ...monoFont, clipPath: CUT_BTN, backgroundColor: cat.accent, color: "#fff" }}
+                          >
+                            <Icon size={10} strokeWidth={2.5} />
+                            {cat.label}
+                          </span>
+                        )}
                         <span
-                          style={{ clipPath: "polygon(0 0, calc(100% - 5px) 0, 100% 5px, 100% 100%, 0 100%)" }}
-                          className={`text-xs font-mono px-2 py-0.5 bg-[#0a0a0f] border border-[#1e1e2e] ${
-                            submission.is_correct ? "text-[#00ff88]" : "text-[#ff3c6e]"
-                          }`}
+                          className="text-xs font-black uppercase px-1.5 py-0.5 border-2 border-black"
+                          style={{
+                            ...monoFont,
+                            clipPath: CUT_BTN,
+                            backgroundColor: correct ? "#00e676" : "#ff3c6e",
+                            color: correct ? "#111" : "#fff",
+                          }}
                         >
-                          {submission.is_correct ? "CORRECT" : "WRONG"}
+                          {correct ? "Correct" : "Wrong"}
                         </span>
                       </div>
 
                       <div className="flex items-center gap-3 flex-wrap mb-2">
-                        <span className="text-[#555570] font-mono text-xs">
+                        <span className="text-xs font-black text-[#888]" style={monoFont}>
                           Ch.{challenge.chapter} Stage {challenge.stage_order}
                         </span>
-                        <span className="text-[#00ff88] font-bold font-mono text-xs">
+                        <span
+                          className="text-xs font-black uppercase px-1.5 py-0.5 bg-[#00e676] border-2 border-black text-black"
+                          style={{ ...monoFont, clipPath: CUT_BTN }}
+                        >
                           {challenge.points} pts
                         </span>
                       </div>
@@ -174,8 +198,8 @@ export default async function SubmissionsPage() {
                         <SubmissionFlag flag={submission.submitted_flag} />
                       </div>
 
-                      <div className="flex items-center gap-1.5 text-[#333355] font-mono text-xs">
-                        <Clock size={10} />
+                      <div className="flex items-center gap-1.5 text-[#aaa] text-xs font-black" style={monoFont}>
+                        <Clock size={10} strokeWidth={2.5} />
                         <SubmissionDate dateString={submission.submitted_at} />
                       </div>
                     </div>

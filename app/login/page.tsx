@@ -3,13 +3,21 @@
 import { useState } from "react"
 import Link from "next/link"
 import { login } from "@/lib/actions/auth"
-import { ChevronRight, AlertTriangle } from "lucide-react"
+import { ArrowRight, AlertTriangle, Eye, EyeOff } from "lucide-react"
+
+const CUT = "polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px))"
+const CUT_BTN = "polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%)"
+const CUT_SM = "polygon(0 0, calc(100% - 7px) 0, 100% 7px, 100% 100%, 0 100%)"
+
+const navFont = { fontFamily: "'Arial Black', Impact, sans-serif" }
+const monoFont = { fontFamily: "'Courier New', monospace" }
 
 export default function Login() {
   const [emailOrUsername, setEmailOrUsername] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
+  const [showPass, setShowPass] = useState(false)
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault()
@@ -25,27 +33,39 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] text-white flex items-center justify-center px-4">
+    <div
+      className="min-h-screen bg-[#f4efe4] text-black flex items-center justify-center px-4"
+      style={navFont}
+    >
       <div className="w-full max-w-sm">
+
         <div className="text-center mb-8">
-          <Link href="/" className="text-2xl font-black text-[#00ff88] tracking-tight font-mono">
-            NzrCTF<span className="text-white"> Lab</span>
+          <Link
+            href="/"
+            className="font-black text-xl tracking-tight text-black"
+            style={navFont}
+          >
+            NzrCTF<span className="text-[#00e676]"> Lab</span>
           </Link>
-          <p className="text-[#555570] text-xs mt-1 font-mono">CTF Challenge Platform</p>
+          <p className="text-[#666] text-xs mt-1 font-bold uppercase tracking-widest" style={monoFont}>
+            CTF Challenge Platform
+          </p>
         </div>
 
         <div
-          style={{ clipPath: "polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px))" }}
-          className="bg-[#11111a] border border-[#1e1e2e] p-6"
+          className="bg-white border-4 border-black shadow-[8px_8px_0_#111] p-6"
+          style={{ clipPath: CUT }}
         >
           <div className="mb-6">
-            <h2 className="text-white font-black text-lg font-mono">Login</h2>
-            <p className="text-[#555570] text-xs font-mono mt-0.5">Log in to your account</p>
+            <h2 className="font-black text-lg uppercase text-black" style={navFont}>Login</h2>
+            <p className="text-[#555] text-xs font-bold mt-0.5" style={monoFont}>
+              Good to have you back
+            </p>
           </div>
 
-          <form onSubmit={handleLogin} className="space-y-4">
+          <form onSubmit={handleLogin} className="flex flex-col gap-4">
             <div>
-              <label className="block text-[#555570] text-xs font-mono uppercase tracking-widest mb-1.5">
+              <label className="block text-[#444] text-xs font-black uppercase tracking-widest mb-1.5" style={monoFont}>
                 Email or Username
               </label>
               <input
@@ -53,31 +73,47 @@ export default function Login() {
                 value={emailOrUsername}
                 onChange={(e) => setEmailOrUsername(e.target.value)}
                 required
-                placeholder="h4ck3r@h4cker.com or h4ck3r"
-                className="w-full bg-[#0a0a0f] border border-[#1e1e2e] text-white font-mono text-sm px-3 py-2.5 focus:outline-none focus:border-[#00ff88] focus:ring-1 focus:ring-[#00ff88]/20 transition-all placeholder:text-[#333350]"
+                placeholder="h4ck3r or you@example.com"
+                className="w-full bg-[#f4efe4] border-4 border-black text-black text-sm px-3 py-2.5 focus:outline-none focus:bg-white transition-all placeholder:text-[#bbb]"
+                style={{ ...monoFont, clipPath: CUT_SM }}
               />
             </div>
 
             <div>
-              <label className="block text-[#555570] text-xs font-mono uppercase tracking-widest mb-1.5">
+              <label className="block text-[#444] text-xs font-black uppercase tracking-widest mb-1.5" style={monoFont}>
                 Password
               </label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                placeholder="••••••••"
-                className="w-full bg-[#0a0a0f] border border-[#1e1e2e] text-white font-mono text-sm px-3 py-2.5 focus:outline-none focus:border-[#00ff88] focus:ring-1 focus:ring-[#00ff88]/20 transition-all placeholder:text-[#333350]"
-              />
+              <div className="relative">
+                <input
+                  type={showPass ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  placeholder="••••••••"
+                  className="w-full bg-[#f4efe4] border-4 border-black text-black text-sm px-3 py-2.5 pr-12 focus:outline-none focus:bg-white transition-all placeholder:text-[#bbb]"
+                  style={{ ...monoFont, clipPath: CUT_SM }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPass(!showPass)}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1 border-2 border-black bg-white hover:bg-black hover:text-white transition-all"
+                  title="Toggle visibility"
+                  style={{ clipPath: CUT_BTN }}
+                >
+                  {showPass
+                    ? <EyeOff size={11} strokeWidth={3} />
+                    : <Eye size={11} strokeWidth={3} />
+                  }
+                </button>
+              </div>
             </div>
 
             {error && (
               <div
-                style={{ clipPath: "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%)" }}
-                className="flex items-center gap-2 bg-[#ff3c6e]/10 border border-[#ff3c6e]/30 text-[#ff3c6e] text-xs font-mono px-3 py-2"
+                className="flex items-start gap-2 bg-[#fff0f3] border-4 border-[#ff3c6e] text-[#ff3c6e] text-xs font-black px-3 py-2.5"
+                style={{ ...monoFont, clipPath: CUT_SM }}
               >
-                <AlertTriangle size={12} className="shrink-0" />
+                <AlertTriangle size={13} className="shrink-0 mt-0.5" strokeWidth={3} />
                 {error}
               </div>
             )}
@@ -85,17 +121,20 @@ export default function Login() {
             <button
               type="submit"
               disabled={loading}
-              style={{ clipPath: "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%)" }}
-              className="w-full flex items-center justify-center gap-2 bg-[#00ff88] text-black font-bold text-sm py-2.5 hover:opacity-90 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full flex items-center justify-center gap-2 bg-[#00e676] border-4 border-black text-black font-black text-sm py-3 uppercase tracking-wide shadow-[5px_5px_0_#111] hover:shadow-[2px_2px_0_#111] hover:translate-x-[3px] hover:translate-y-[3px] active:shadow-none active:translate-x-[5px] active:translate-y-[5px] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none disabled:translate-x-0 disabled:translate-y-0"
+              style={{ ...navFont, clipPath: CUT_BTN }}
             >
-              {loading ? "Logging in..." : <>LOGIN <ChevronRight size={14} /></>}
+              {loading ? "Hold on..." : <>Login <ArrowRight size={15} strokeWidth={3} /></>}
             </button>
           </form>
         </div>
 
-        <p className="text-center text-[#555570] text-xs font-mono mt-4">
-          Don&apos;t have an account?{" "}
-          <Link href="/register" className="text-[#00ff88] hover:underline">
+        <p className="text-center text-[#888] text-xs font-black uppercase mt-5" style={monoFont}>
+          No account yet?{" "}
+          <Link
+            href="/register"
+            className="text-black underline underline-offset-2 hover:text-[#00e676] transition-colors"
+          >
             Register
           </Link>
         </p>

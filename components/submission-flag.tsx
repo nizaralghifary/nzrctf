@@ -3,21 +3,32 @@
 import { useState } from "react"
 import { Eye, EyeOff } from "lucide-react"
 
+const CUT_SM = "polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 0 100%)"
+
+const monoFont = { fontFamily: "'Courier New', monospace" }
+
 export default function SubmissionFlag({ flag }: { flag: string }) {
   const [revealed, setRevealed] = useState(false)
 
   return (
     <div
-      style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 0 100%)" }}
-      className="inline-flex items-center gap-2 bg-[#0a0a0f] border border-[#1e1e2e] px-2 py-0.5"
+      className="flex items-center gap-2 bg-[#f4efe4] border-4 border-black px-3 py-1.5 w-full max-w-sm"
+      style={{ clipPath: CUT_SM }}
     >
       <button
         onClick={() => setRevealed((prev) => !prev)}
-        className="shrink-0 text-[#555570] hover:text-white transition-colors"
+        className="shrink-0 border-2 border-black bg-white p-0.5 hover:bg-black hover:text-white transition-all"
+        style={{ clipPath: CUT_SM }}
       >
-        {revealed ? <EyeOff size={10} /> : <Eye size={10} />}
+        {revealed
+          ? <EyeOff size={10} strokeWidth={3} />
+          : <Eye    size={10} strokeWidth={3} />
+        }
       </button>
-      <span className={`font-mono text-xs text-[#555570] tracking-wider transition-all duration-200 ${revealed ? "" : "blur-sm select-none"}`}>
+      <span
+        className={`text-xs font-black text-[#333] tracking-wider transition-all duration-200 truncate ${revealed ? "" : "blur-sm select-none"}`}
+        style={monoFont}
+      >
         {flag}
       </span>
     </div>

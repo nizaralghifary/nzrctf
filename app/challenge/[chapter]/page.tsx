@@ -11,61 +11,34 @@ import {
   Code2,
   ShieldOff,
   Globe,
-  ChevronLeft,
+  ArrowLeft,
   Lock,
 } from "lucide-react"
+
+const CUT = "polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px))"
+const CUT_SM = "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))"
+const CUT_BTN = "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%)"
+
+const navFont = { fontFamily: "'Arial Black', Impact, sans-serif" }
+const monoFont = { fontFamily: "'Courier New', monospace" }
 
 const chapterConfig: Record<string, {
   id: number
   title: string
   icon: React.ElementType
-  color: string
-  hex: string
-  border: string
-  glow: string
+  accent: string
+  bg: string
 }> = {
-  "chapter-01": {
-    id: 1,
-    title: "SQL Injection",
-    icon: Database,
-    color: "text-[#ff3c6e]",
-    hex: "#ff3c6e",
-    border: "border-[#ff3c6e]/40",
-    glow: "shadow-[0_0_12px_rgba(255,60,110,0.15)]",
-  },
-  "chapter-02": {
-    id: 2,
-    title: "Cross-Site Scripting",
-    icon: Code2,
-    color: "text-[#ffd700]",
-    hex: "#ffd700",
-    border: "border-[#ffd700]/40",
-    glow: "shadow-[0_0_12px_rgba(255,215,0,0.15)]",
-  },
-  "chapter-03": {
-    id: 3,
-    title: "Broken Access Control",
-    icon: ShieldOff,
-    color: "text-[#00bfff]",
-    hex: "#00bfff",
-    border: "border-[#00bfff]/40",
-    glow: "shadow-[0_0_12px_rgba(0,191,255,0.15)]",
-  },
-  "chapter-04": {
-    id: 4,
-    title: "SSRF / LFI / XXE",
-    icon: Globe,
-    color: "text-[#bf5fff]",
-    hex: "#bf5fff",
-    border: "border-[#bf5fff]/40",
-    glow: "shadow-[0_0_12px_rgba(191,95,255,0.15)]",
-  },
+  "chapter-01": { id: 1, title: "SQL Injection",        icon: Database,  accent: "#ff3c6e", bg: "#fff0f3" },
+  "chapter-02": { id: 2, title: "Cross-Site Scripting",  icon: Code2,     accent: "#e6c200", bg: "#fffbe0" },
+  "chapter-03": { id: 3, title: "Broken Access Control", icon: ShieldOff, accent: "#0066ff", bg: "#eef3ff" },
+  "chapter-04": { id: 4, title: "SSRF / LFI / XXE",      icon: Globe,     accent: "#9900cc", bg: "#f8eeff" },
 }
 
 const difficultyConfig: Record<string, { label: string; color: string; bars: number }> = {
-  easy:   { label: "EASY",   color: "text-[#00ff88]", bars: 1 },
-  medium: { label: "MEDIUM", color: "text-[#ffd700]", bars: 2 },
-  hard:   { label: "HARD",   color: "text-[#ff3c6e]", bars: 3 },
+  easy: { label: "Easy",   color: "#00c45a", bars: 1 },
+  medium: { label: "Medium", color: "#e6c200", bars: 2 },
+  hard: { label: "Hard",   color: "#ff3c6e", bars: 3 },
 }
 
 export default async function ChapterPage({
@@ -103,88 +76,104 @@ export default async function ChapterPage({
   )
 
   const chapterSolved = challenges?.filter((c) => solvedIds.has(c.id)).length ?? 0
-  const chapterTotal = challenges?.length ?? 0
-  const percentage = chapterTotal > 0 ? Math.round((chapterSolved / chapterTotal) * 100) : 0
+  const chapterTotal  = challenges?.length ?? 0
+  const percentage    = chapterTotal > 0 ? Math.round((chapterSolved / chapterTotal) * 100) : 0
 
   const Icon = config.icon
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] text-white">
+    <div className="min-h-screen bg-[#f4efe4] text-black" style={navFont}>
       <NavbarServer />
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
 
-        <div className="mb-10">
+        <div className="mb-8">
           <Link
             href="/lab"
-            className="inline-flex items-center gap-1 text-[#555570] hover:text-white font-mono text-xs transition-colors mb-6"
+            className="inline-flex items-center gap-1.5 text-xs font-black uppercase border-2 border-black bg-white px-3 py-1.5 mb-6 shadow-[3px_3px_0_#111] hover:shadow-[1px_1px_0_#111] hover:translate-x-[2px] hover:translate-y-[2px] active:shadow-none active:translate-x-[3px] active:translate-y-[3px] transition-all"
+            style={{ ...monoFont, clipPath: CUT_BTN }}
           >
-            <ChevronLeft size={12} /> Back to Lab
+            <ArrowLeft size={11} strokeWidth={3} /> Back to Lab
           </Link>
 
-          <div className="flex items-start gap-4">
-            <div
-              style={{ clipPath: "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%)" }}
-              className={`shrink-0 w-12 h-12 flex items-center justify-center bg-[#11111a] border ${config.border}`}
-            >
-              <Icon size={20} className={config.color} />
-            </div>
-            <div className="flex-1 min-w-0">
-              <span className={`font-mono text-xs ${config.color}`}>
-                {String(config.id).padStart(2, "0")} Chapter
-              </span>
-              <h1 className="text-2xl font-black mb-3">{config.title}</h1>
-              <div className="flex items-center gap-3">
-                <ProgressBar value={percentage} color={config.hex} />
-                <span className={`text-xs font-mono font-bold ${config.color}`}>
-                  {percentage}%
+          <div
+            className="bg-white border-4 border-black shadow-[8px_8px_0_#111] p-6 relative overflow-hidden"
+            style={{ clipPath: CUT }}
+          >
+            <div className="absolute top-0 right-0 w-0 h-0 border-t-[48px] border-r-[48px] border-r-transparent" style={{ borderTopColor: config.accent }} />
+
+            <div className="flex items-start gap-4">
+              <div
+                className="shrink-0 w-12 h-12 flex items-center justify-center border-4 border-black"
+                style={{ backgroundColor: config.accent, clipPath: CUT_SM }}
+              >
+                <Icon size={20} color="#fff" strokeWidth={2.5} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <span className="text-xs font-black uppercase" style={{ ...monoFont, color: config.accent }}>
+                  Chapter {String(config.id).padStart(2, "0")}
                 </span>
-                <span className="text-[#555570] text-xs font-mono">
-                  {chapterSolved}/{chapterTotal} stages
-                </span>
+                <h1 className="text-2xl font-black uppercase mb-3" style={navFont}>
+                  {config.title}
+                </h1>
+                <div className="flex items-center gap-3">
+                  <ProgressBar value={percentage} color={config.accent} />
+                  <span className="text-xs font-black" style={{ ...monoFont, color: config.accent }}>
+                    {percentage}%
+                  </span>
+                  <span className="text-[#888] text-xs font-black" style={monoFont}>
+                    {chapterSolved}/{chapterTotal} stages
+                  </span>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
         <div>
-          <p className="text-[#555570] font-mono text-xs tracking-widest mb-4">
-            Stages
-          </p>
-          <div className="grid gap-3">
+          <div className="flex items-center gap-3 mb-5">
+            <div className="w-4 h-8 bg-black" />
+            <p className="text-xs font-black uppercase tracking-widest text-[#888]" style={monoFont}>
+              Stages
+            </p>
+          </div>
+
+          <div className="grid gap-4">
             {challenges?.map((challenge, idx) => {
-              const solved = solvedIds.has(challenge.id)
-              const diff = difficultyConfig[challenge.difficulty]
+              const solved   = solvedIds.has(challenge.id)
+              const diff     = difficultyConfig[challenge.difficulty]
               const prevChallenge = idx > 0 ? challenges[idx - 1] : null
               const isLocked = prevChallenge !== null && !solvedIds.has(prevChallenge.id)
 
               return (
                 <div
                   key={challenge.id}
-                  style={{
-                    clipPath: "polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px))",
-                  }}
-                  className={`relative bg-[#11111a] border p-4 sm:p-5 transition-all ${
+                  className={`border-4 border-black p-4 sm:p-5 transition-all ${
                     isLocked
-                      ? "border-[#1e1e2e] opacity-50"
+                      ? "bg-[#e8e2d8] opacity-60"
                       : solved
-                      ? `${config.border} opacity-60`
-                      : `${config.border} ${config.glow}`
+                      ? "bg-[#f0fff7]"
+                      : "shadow-[6px_6px_0_#111]"
                   }`}
+                  style={{
+                    clipPath: CUT,
+                    backgroundColor: isLocked ? "#e8e2d8" : solved ? "#f0fff7" : config.bg,
+                  }}
                 >
                   <div className="flex items-start gap-4">
                     <div
-                      style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 0 100%)" }}
-                      className={`shrink-0 w-10 h-10 flex items-center justify-center bg-[#0a0a0f] border ${
-                        isLocked ? "border-[#1e1e2e]" : config.border
-                      }`}
+                      className="shrink-0 w-10 h-10 flex items-center justify-center border-4 border-black"
+                      style={{
+                        clipPath: CUT_SM,
+                        backgroundColor: isLocked ? "#ccc" : solved ? "#00e676" : config.accent,
+                      }}
                     >
                       {isLocked ? (
-                        <Lock size={16} className="text-[#333355]" />
+                        <Lock size={15} color="#888" strokeWidth={2.5} />
                       ) : solved ? (
-                        <CheckCircle size={16} className="text-[#00ff88]" />
+                        <CheckCircle size={15} color="#111" strokeWidth={2.5} />
                       ) : (
-                        <span className={`font-black font-mono text-xs ${config.color}`}>
+                        <span className="font-black text-xs text-white" style={monoFont}>
                           {String(idx + 1).padStart(2, "0")}
                         </span>
                       )}
@@ -192,63 +181,76 @@ export default async function ChapterPage({
 
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2 flex-wrap mb-1">
-                        <span className={`font-bold text-sm ${isLocked ? "text-[#333355]" : "text-white"}`}>
+                        <span className={`font-black text-sm ${isLocked ? "text-[#aaa]" : "text-black"}`} style={navFont}>
                           {challenge.title}
                         </span>
                         {!isLocked && (
                           <span
-                            style={{ clipPath: "polygon(0 0, calc(100% - 5px) 0, 100% 5px, 100% 100%, 0 100%)" }}
-                            className={`text-xs font-mono px-2 py-0.5 bg-[#0a0a0f] border ${config.border} ${config.color}`}
+                            className="text-xs font-black uppercase px-1.5 py-0.5 border-2 border-black"
+                            style={{ ...monoFont, clipPath: CUT_BTN, backgroundColor: config.accent, color: "#fff" }}
                           >
                             Stage {idx + 1}
                           </span>
                         )}
+                        {solved && (
+                          <span
+                            className="text-xs font-black uppercase px-1.5 py-0.5 bg-[#00e676] border-2 border-black text-black"
+                            style={{ ...monoFont, clipPath: CUT_BTN }}
+                          >
+                            Solved
+                          </span>
+                        )}
                       </div>
 
-                      <p className={`text-xs font-mono leading-relaxed mb-3 ${isLocked ? "text-[#333355]" : "text-[#555570]"}`}>
-                        {isLocked ? "Complete previous stage to unlock" : challenge.description}
+                      <p
+                        className={`text-xs leading-relaxed mb-3 ${isLocked ? "text-[#bbb]" : "text-[#333]"}`}
+                        style={{ ...monoFont, fontWeight: 700 }}
+                      >
+                        {isLocked ? "Complete previous stage to unlock." : challenge.description}
                       </p>
 
                       {!isLocked && (
                         <>
-                          <div className="flex items-center gap-3 mb-3">
+                          <div className="flex items-center gap-3 mb-3 flex-wrap">
                             <div className="flex items-center gap-1.5">
                               <div className="flex gap-0.5">
                                 {[1, 2, 3].map((i) => (
                                   <div
                                     key={i}
-                                    className={`w-4 h-1 rounded-sm ${
-                                      i <= (diff?.bars ?? 1)
-                                        ? diff?.color.replace("text-", "bg-") ?? "bg-[#00ff88]"
-                                        : "bg-[#1e1e2e]"
-                                    }`}
+                                    className="w-4 h-1.5 rounded-full"
+                                    style={{ backgroundColor: i <= (diff?.bars ?? 1) ? diff?.color : "#ddd" }}
                                   />
                                 ))}
                               </div>
-                              <span className={`text-xs font-mono font-bold ${diff?.color ?? "text-white"}`}>
+                              <span className="text-xs font-black uppercase" style={{ ...monoFont, color: diff?.color }}>
                                 {diff?.label}
                               </span>
                             </div>
-                            <span className="text-[#00ff88] font-black font-mono text-sm">
+
+                            <span
+                              className="text-xs font-black uppercase px-2 py-0.5 bg-[#00e676] border-2 border-black text-black"
+                              style={{ ...monoFont, clipPath: CUT_BTN }}
+                            >
                               {challenge.points} pts
                             </span>
+
                             <a
                               href={challenge.url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 0 100%)" }}
-                              className="flex items-center gap-1 bg-[#11111a] border border-[#1e1e2e] hover:border-[#333355] text-white text-xs font-bold px-3 py-1.5 transition-all"
+                              className="inline-flex items-center gap-1 text-xs font-black uppercase px-3 py-1.5 border-2 border-black bg-white text-black shadow-[2px_2px_0_#111] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
+                              style={{ ...monoFont, clipPath: CUT_BTN }}
                             >
-                              OPEN <ExternalLink size={11} />
+                              Open <ExternalLink size={11} strokeWidth={3} />
                             </a>
                           </div>
 
                           {solved ? (
                             <div
-                              style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 0 100%)" }}
-                              className="inline-flex items-center gap-1 bg-[#00ff88]/10 border border-[#00ff88]/30 text-[#00ff88] text-xs font-mono font-bold px-3 py-1.5"
+                              className="inline-flex items-center gap-1.5 bg-[#00e676] border-2 border-black text-black text-xs font-black uppercase px-3 py-1.5"
+                              style={{ ...monoFont, clipPath: CUT_BTN }}
                             >
-                              <CheckCircle size={11} /> SOLVED
+                              <CheckCircle size={11} strokeWidth={3} /> Solved
                             </div>
                           ) : (
                             <SubmitForm

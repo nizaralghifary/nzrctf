@@ -1,9 +1,16 @@
 import { redirect } from "next/navigation"
 import Link from "next/link"
 import { createClient } from "@/lib/supabase/server"
-import { Database, Code2, ShieldOff, Globe, ChevronRight } from "lucide-react"
+import { Database, Code2, ShieldOff, Globe, ArrowRight } from "lucide-react"
 import ProgressBar from "@/components/progress-bar"
 import NavbarServer from "@/components/navbar-server"
+
+const CUT = "polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px))"
+const CUT_SM = "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))"
+const CUT_BTN = "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%)"
+
+const navFont = { fontFamily: "'Arial Black', Impact, sans-serif" }
+const monoFont = { fontFamily: "'Courier New', monospace" }
 
 const chapterConfig = [
   {
@@ -12,10 +19,8 @@ const chapterConfig = [
     title: "SQL Injection",
     description: "Bypass login panels, extract database contents, and exploit poorly sanitized queries.",
     icon: Database,
-    color: "text-[#ff3c6e]",
-    hex: "#ff3c6e",
-    border: "border-[#ff3c6e]/40",
-    glow: "hover:shadow-[0_0_16px_rgba(255,60,110,0.15)]",
+    accent: "#ff3c6e",
+    bg: "#fff0f3",
   },
   {
     id: 2,
@@ -23,10 +28,8 @@ const chapterConfig = [
     title: "Cross-Site Scripting",
     description: "Inject malicious scripts, steal cookies, and hijack user sessions.",
     icon: Code2,
-    color: "text-[#ffd700]",
-    hex: "#ffd700",
-    border: "border-[#ffd700]/40",
-    glow: "hover:shadow-[0_0_16px_rgba(255,215,0,0.15)]",
+    accent: "#e6c200",
+    bg: "#fffbe0",
   },
   {
     id: 3,
@@ -34,10 +37,8 @@ const chapterConfig = [
     title: "Broken Access Control",
     description: "Access resources you shouldn't, manipulate object references, and escalate privileges.",
     icon: ShieldOff,
-    color: "text-[#00bfff]",
-    hex: "#00bfff",
-    border: "border-[#00bfff]/40",
-    glow: "hover:shadow-[0_0_16px_rgba(0,191,255,0.15)]",
+    accent: "#0066ff",
+    bg: "#eef3ff",
   },
   {
     id: 4,
@@ -45,10 +46,8 @@ const chapterConfig = [
     title: "SSRF / LFI / XXE",
     description: "Reach internal services, read sensitive files, and exploit XML parsers.",
     icon: Globe,
-    color: "text-[#bf5fff]",
-    hex: "#bf5fff",
-    border: "border-[#bf5fff]/40",
-    glow: "hover:shadow-[0_0_16px_rgba(191,95,255,0.15)]",
+    accent: "#9900cc",
+    bg: "#f8eeff",
   },
 ]
 
@@ -87,90 +86,113 @@ export default async function Lab() {
       .reduce((sum, c) => sum + c.points, 0) ?? 0
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] text-white">
+    <div
+      className="min-h-screen bg-[#f4efe4] text-black"
+      style={navFont}
+    >
       <NavbarServer />
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
 
         <div className="mb-10">
-          <p className="text-[#555570] font-mono text-xs tracking-widest mb-1">
-            Welcome back
-          </p>
-          <h1 className="text-2xl font-black mb-4">
-            {profile?.username ?? "Hacker"}
-          </h1>
-          <div className="flex flex-wrap gap-3">
-            {[
-              { val: totalPoints, label: "POINTS", color: "text-[#00ff88]", accent: "border-[#00ff88]/20" },
-              { val: solvedIds.size, label: "SOLVED", color: "text-[#00ff88]", accent: "border-[#00ff88]/20" },
-              { val: challenges?.length ?? 0, label: "TOTAL", color: "text-white", accent: "border-[#1e1e2e]" },
-            ].map((stat) => (
-              <div
-                key={stat.label}
-                style={{ clipPath: "polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%)" }}
-                className={`bg-[#11111a] border ${stat.accent} px-5 py-3 text-center`}
-              >
-                <div className={`${stat.color} font-black font-mono text-xl`}>{stat.val}</div>
-                <div className="text-[#555570] font-mono text-xs">{stat.label}</div>
-              </div>
-            ))}
+          <div
+            className="bg-white border-4 border-black shadow-[8px_8px_0_#111] p-6 relative overflow-hidden"
+            style={{ clipPath: CUT }}
+          >
+            <div className="absolute top-0 right-0 w-0 h-0 border-t-[48px] border-r-[48px] border-t-[#00e676] border-r-transparent" />
+            <p className="text-xs font-black tracking-widest text-[#888] mb-1" style={{ ...monoFont, fontWeight: 700 }}>
+              Welcome back
+            </p>
+            <h1 className="text-2xl font-black mb-5" style={navFont}>
+              {profile?.username ?? "Hacker"}
+            </h1>
+            <div className="flex flex-wrap gap-3">
+              {[
+                { val: totalPoints,          label: "Points",     highlight: true  },
+                { val: solvedIds.size,        label: "Solved",     highlight: true  },
+                { val: challenges?.length ?? 0, label: "Total",   highlight: false },
+              ].map((stat) => (
+                <div
+                  key={stat.label}
+                  className={`px-5 py-3 text-center border-4 border-black ${stat.highlight ? "bg-[#00e676]" : "bg-[#f4efe4]"}`}
+                  style={{ clipPath: CUT_BTN }}
+                >
+                  <div className="font-black text-xl" style={navFont}>{stat.val}</div>
+                  <div className="text-xs font-black uppercase tracking-widest text-[#444] mt-0.5" style={monoFont}>
+                    {stat.label}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
         <div>
-          <p className="text-[#555570] font-mono text-xs tracking-widest mb-4">
-            Chapters
-          </p>
-          <div className="grid gap-3">
+          <div className="flex items-center gap-3 mb-5">
+            <div className="w-4 h-8 bg-black" />
+            <p className="text-xs font-black uppercase tracking-widest text-[#888]" style={monoFont}>
+              Chapters
+            </p>
+          </div>
+
+          <div className="grid gap-4">
             {chapterConfig.map((chapter) => {
               const chapterChallenges = challenges?.filter((c) => c.chapter === chapter.id) ?? []
               const chapterSolved = chapterChallenges.filter((c) => solvedIds.has(c.id)).length
               const chapterTotal = chapterChallenges.length
               const percentage = chapterTotal > 0 ? Math.round((chapterSolved / chapterTotal) * 100) : 0
               const Icon = chapter.icon
+              const done = chapterSolved === chapterTotal && chapterTotal > 0
 
               return (
                 <Link
                   key={chapter.id}
                   href={`/challenge/${chapter.slug}`}
-                  style={{
-                    clipPath: "polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px))",
-                  }}
-                  className={`block bg-[#11111a] border p-5 transition-all ${chapter.border} ${chapter.glow}`}
+                  className="block border-4 border-black p-5 shadow-[6px_6px_0_#111] hover:shadow-[3px_3px_0_#111] hover:translate-x-[3px] hover:translate-y-[3px] transition-all"
+                  style={{ backgroundColor: chapter.bg, clipPath: CUT }}
                 >
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div className="flex items-center gap-4 min-w-0">
                       <div
-                        style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 0 100%)" }}
-                        className={`shrink-0 w-10 h-10 flex items-center justify-center bg-[#0a0a0f] border ${chapter.border}`}
+                        className="shrink-0 w-10 h-10 flex items-center justify-center border-4 border-black"
+                        style={{ backgroundColor: chapter.accent, clipPath: CUT_SM }}
                       >
-                        <Icon size={16} className={chapter.color} />
+                        <Icon size={16} color="#fff" strokeWidth={2.5} />
                       </div>
+
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2 mb-1">
-                          <span className={`font-mono text-xs ${chapter.color}`}>
+                          <span className="font-black text-xs" style={{ ...monoFont, color: chapter.accent }}>
                             {String(chapter.id).padStart(2, "0")}
                           </span>
-                          <span className="font-bold text-sm">{chapter.title}</span>
+                          <span className="font-black text-sm uppercase" style={navFont}>
+                            {chapter.title}
+                          </span>
+                          {done && (
+                            <span
+                              className="text-xs font-black uppercase px-1.5 py-0.5 bg-[#00e676] border-2 border-black text-black"
+                              style={{ ...monoFont, clipPath: CUT_BTN }}
+                            >
+                              Done
+                            </span>
+                          )}
                         </div>
-                        <p className="text-[#555570] text-xs font-mono leading-relaxed mb-3">
+                        <p className="text-[#555] text-xs leading-relaxed mb-3" style={{ ...monoFont, fontWeight: 700 }}>
                           {chapter.description}
                         </p>
                         <div className="flex items-center gap-3">
-                          <ProgressBar
-                            value={percentage}
-                            color={chapter.hex}
-                          />
-                          <span className={`text-xs font-mono font-bold ${chapter.color}`}>
+                          <ProgressBar value={percentage} color={chapter.accent} />
+                          <span className="text-xs font-black" style={{ ...monoFont, color: chapter.accent }}>
                             {percentage}%
                           </span>
-                          <span className="text-[#555570] text-xs font-mono">
+                          <span className="text-[#888] text-xs font-black" style={monoFont}>
                             {chapterSolved}/{chapterTotal} stages
                           </span>
                         </div>
                       </div>
                     </div>
-                    <ChevronRight size={16} className={`${chapter.color} shrink-0 hidden sm:block`} />
+
+                    <ArrowRight size={18} strokeWidth={3} className="shrink-0 hidden sm:block" style={{ color: chapter.accent }} />
                   </div>
                 </Link>
               )

@@ -4,6 +4,11 @@ import { useActionState } from "react"
 import { submitFlag } from "@/lib/actions/challenge"
 import { Flag, X, Check } from "lucide-react"
 
+const CUT_BTN = "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%)"
+const CUT_SM  = "polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 0 100%)"
+
+const monoFont = { fontFamily: "'Courier New', monospace" }
+
 export default function SubmitForm({
   challengeId,
   chapterSlug,
@@ -14,7 +19,7 @@ export default function SubmitForm({
   const [state, action, pending] = useActionState(submitFlag, null)
 
   return (
-    <div className="flex flex-col gap-1.5">
+    <div className="flex flex-col gap-2">
       <form action={action} className="flex gap-2">
         <input type="hidden" name="challengeId" value={challengeId} />
         <input type="hidden" name="chapterSlug" value={chapterSlug} />
@@ -22,23 +27,36 @@ export default function SubmitForm({
           type="text"
           name="flag"
           placeholder="NzrCTF{...}"
-          className="bg-[#0a0a0f] border border-[#1e1e2e] text-white font-mono text-xs px-3 py-1.5 rounded focus:outline-none focus:border-[#00ff88] focus:ring-1 focus:ring-[#00ff88]/20 transition-all placeholder:text-[#333350] w-40 sm:w-48"
           required
+          className="bg-[#f4efe4] border-4 border-black text-black text-xs px-3 py-2 w-40 sm:w-52 focus:outline-none focus:bg-white transition-all placeholder:text-[#bbb]"
+          style={{ ...monoFont, clipPath: CUT_SM }}
         />
         <button
           type="submit"
           disabled={pending}
-          style={{ clipPath: "polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 0 100%)" }}
-          className="flex items-center gap-1 bg-[#00ff88] text-black text-xs font-bold px-3 py-1.5 hover:opacity-90 transition-opacity disabled:opacity-50"
+          className="flex items-center gap-1.5 bg-[#00e676] border-4 border-black text-black text-xs font-black uppercase px-3 py-2 shadow-[3px_3px_0_#111] hover:shadow-[1px_1px_0_#111] hover:translate-x-[2px] hover:translate-y-[2px] active:shadow-none active:translate-x-[3px] active:translate-y-[3px] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none disabled:translate-x-0 disabled:translate-y-0"
+          style={{ ...monoFont, clipPath: CUT_BTN }}
         >
-          <Flag size={11} /> {pending ? "..." : "SUBMIT"}
+          <Flag size={11} strokeWidth={3} />
+          {pending ? "..." : "Submit"}
         </button>
       </form>
+
       {state && (
-        <p className={`flex items-center text-xs font-mono ${state.success ? "text-[#00ff88]" : "text-[#ff3c6e]"}`}>
-          {state.success ? <Check className="mr-1 h-4 w-4"/> : <X className="mr-1 h-4 w-4"/>} 
+        <div
+          className={`inline-flex items-center gap-1.5 text-xs font-black uppercase px-3 py-1.5 border-2 border-black ${
+            state.success
+              ? "bg-[#00e676] text-black"
+              : "bg-[#fff0f3] text-[#ff3c6e] border-[#ff3c6e]"
+          }`}
+          style={{ ...monoFont, clipPath: CUT_SM }}
+        >
+          {state.success
+            ? <Check size={11} strokeWidth={3} />
+            : <X size={11} strokeWidth={3} />
+          }
           {state.message}
-        </p>
+        </div>
       )}
     </div>
   )

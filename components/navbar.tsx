@@ -13,7 +13,7 @@ import {
   BarChart2,
   BookOpenText,
   LogOut,
-  ChevronRight,
+  ArrowRight,
   ChevronDown,
   Database,
   Code2,
@@ -30,11 +30,21 @@ type NavbarProps = {
 }
 
 const chapters = [
-  { slug: "chapter-01", label: "SQL Injection", icon: Database, color: "text-[#ff3c6e]", border: "border-[#ff3c6e]/30" },
-  { slug: "chapter-02", label: "Cross-Site Scripting", icon: Code2, color: "text-[#ffd700]", border: "border-[#ffd700]/30" },
-  { slug: "chapter-03", label: "Broken Access Control", icon: ShieldOff, color: "text-[#00bfff]", border: "border-[#00bfff]/30" },
-  { slug: "chapter-04", label: "SSRF / LFI / XXE", icon: Globe, color: "text-[#bf5fff]", border: "border-[#bf5fff]/30" },
+  { slug: "chapter-01", label: "SQL Injection",        icon: Database,  accent: "#ff3c6e" },
+  { slug: "chapter-02", label: "Cross-Site Scripting",  icon: Code2,     accent: "#e6c200" },
+  { slug: "chapter-03", label: "Broken Access Control", icon: ShieldOff, accent: "#0066ff" },
+  { slug: "chapter-04", label: "SSRF / LFI / XXE",      icon: Globe,     accent: "#9900cc" },
 ]
+
+const navFont  = { fontFamily: "'Arial Black', Impact, sans-serif" }
+const monoFont = { fontFamily: "'Courier New', monospace" }
+
+const CUT     = "polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px))"
+const CUT_SM  = "polygon(0 0, calc(100% - 7px) 0, 100% 7px, 100% 100%, 7px 100%, 0 calc(100% - 7px))"
+const CUT_BTN = "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%)"
+
+const press = "shadow-[3px_3px_0_#111] hover:shadow-[1px_1px_0_#111] hover:translate-x-[2px] hover:translate-y-[2px] active:shadow-none active:translate-x-[3px] active:translate-y-[3px] transition-all"
+const pressBig = "shadow-[4px_4px_0_#111] hover:shadow-[2px_2px_0_#111] hover:translate-x-[2px] hover:translate-y-[2px] active:shadow-none active:translate-x-[4px] active:translate-y-[4px] transition-all"
 
 export default function Navbar({ username, email, totalPoints = 0, isLoggedIn, logoutAction }: NavbarProps) {
   const [open, setOpen] = useState(false)
@@ -56,239 +66,257 @@ export default function Navbar({ username, email, totalPoints = 0, isLoggedIn, l
 
   return (
     <>
-      <nav className="border-b border-[#1e1e2e] bg-[#0a0a0f]/95 backdrop-blur sticky top-0 z-50 px-6 py-3 flex items-center justify-between">
-        <Link href="/" className="text-[#00ff88] font-black font-mono text-lg tracking-tight">
-          NzrCTF<span className="text-white"> Lab</span>
+      <nav
+        className="border-b-4 border-black bg-white sticky top-0 z-50 px-5 py-3 flex items-center justify-between"
+        style={navFont}
+      >
+        <Link
+          href="/"
+          className="font-black text-base tracking-tight"
+          style={navFont}
+        >
+          NzrCTF<span className="text-[#00e676]"> Lab</span>
         </Link>
 
-        {/* Desktop */}
         {isLoggedIn ? (
-          <div className="hidden sm:flex items-center gap-5">
-            <Link
-              href="/lab"
-              className={`font-mono text-xs transition-colors ${pathname.startsWith("/lab") ? "text-[#00ff88]" : "text-[#555570] hover:text-white"}`}
-            >
-              Lab
-            </Link>
-            <Link
-              href="/leaderboard"
-              className={`font-mono text-xs transition-colors ${pathname.startsWith("/leaderboard") ? "text-[#00ff88]" : "text-[#555570] hover:text-white"}`}
-            >
-              Leaderboard
-            </Link>
-            <Link
-              href="/submissions"
-              className={`font-mono text-xs transition-colors ${pathname.startsWith("/submissions") ? "text-[#00ff88]" : "text-[#555570] hover:text-white"}`}
-            >
-              Submissions
-            </Link>
-            <div className="w-px h-4 bg-[#1e1e2e]" />
+          <div className="hidden sm:flex items-center gap-1">
+            {[
+              { href: "/lab",         label: "Lab"         },
+              { href: "/leaderboard", label: "Leaderboard" },
+              { href: "/submissions", label: "Submissions"  },
+            ].map((item) => {
+              const active = pathname.startsWith(item.href)
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`text-xs font-black uppercase px-3 py-2 border-2 border-black transition-all ${
+                    active
+                      ? "bg-black text-white shadow-none translate-x-[2px] translate-y-[2px]"
+                      : `bg-white text-black ${press}`
+                  }`}
+                  style={{ ...monoFont, clipPath: CUT_BTN }}
+                >
+                  {item.label}
+                </Link>
+              )
+            })}
+
+            <div className="w-px h-5 bg-black mx-2" />
+
             <Link
               href="/account"
-              className={`flex items-center gap-1.5 font-mono text-xs transition-colors ${pathname.startsWith("/account") ? "text-[#00ff88]" : "text-[#555570] hover:text-white"}`}
+              className={`flex items-center gap-1.5 text-xs font-black uppercase px-3 py-2 border-2 border-black transition-all ${
+                pathname.startsWith("/account")
+                  ? "bg-black text-white shadow-none translate-x-[2px] translate-y-[2px]"
+                  : `bg-white text-black ${press}`
+              }`}
+              style={{ ...monoFont, clipPath: CUT_BTN }}
             >
-              <User size={12} className={pathname.startsWith("/account") ? "text-[#00ff88]" : "text-[#00ff88]"} />
-              <span>{displayName}</span>
+              <User size={12} strokeWidth={3} />
+              {displayName}
             </Link>
-            <div className="flex items-center gap-1.5 text-[#00ff88] font-mono text-xs font-bold">
-              <Trophy size={12} />
-              <span>{totalPoints} pts</span>
+
+            <div
+              className="flex items-center gap-1.5 bg-[#00e676] border-2 border-black text-black text-xs font-black uppercase px-3 py-2"
+              style={{ ...monoFont, clipPath: CUT_BTN }}
+            >
+              <Trophy size={12} strokeWidth={3} />
+              {totalPoints} pts
             </div>
+
             {logoutAction && (
               <form action={logoutAction}>
-                <button className="text-[#555570] hover:text-white font-mono text-xs transition-colors">
+                <button
+                  className={`text-xs font-black uppercase px-3 py-2 border-2 border-black text-black bg-white ${press}`}
+                  style={{ ...monoFont, clipPath: CUT_BTN }}
+                >
                   Logout
                 </button>
               </form>
             )}
           </div>
         ) : (
-          <div className="hidden sm:flex items-center gap-3">
-            <Link href="/login" className="text-[#555570] hover:text-white font-mono text-xs transition-colors px-3 py-1.5">
-              Login
+          <div className="hidden sm:flex items-center gap-2">
+            <Link
+              href="/login"
+              className={`text-xs font-black uppercase px-4 py-2 border-2 border-black bg-white text-black ${press}`}
+              style={{ ...monoFont, clipPath: CUT_BTN }}
+            >
+              Sign In
             </Link>
             <Link
               href="/register"
-              className="bg-[#00ff88] text-black font-bold font-mono text-xs px-3 py-1.5 rounded hover:opacity-90 transition-opacity flex items-center gap-1"
+              className={`flex items-center gap-1.5 text-xs font-black uppercase px-4 py-2 border-2 border-black bg-[#00e676] text-black ${press}`}
+              style={{ ...monoFont, clipPath: CUT_BTN }}
             >
-              Register <ChevronRight size={12} />
+              Register <ArrowRight size={12} strokeWidth={3} />
             </Link>
           </div>
         )}
 
-        {/* Mobile */}
         <button
           onClick={() => setOpen(!open)}
-          className="sm:hidden text-[#555570] hover:text-white transition-colors p-1"
+          className={`sm:hidden border-2 border-black p-1.5 bg-white ${press}`}
           aria-label="toggle-menu"
         >
-          {open ? <X size={20} /> : <Menu size={20} />}
+          {open ? <X size={18} strokeWidth={3} /> : <Menu size={18} strokeWidth={3} />}
         </button>
       </nav>
 
       <div
         onClick={() => setOpen(false)}
-        className="fixed inset-0 z-60 sm:hidden"
+        className="fixed inset-0 z-[60] sm:hidden"
         style={{
-          background: "rgba(0,0,0,0.6)",
-          backdropFilter: "blur(4px)",
+          background: "rgba(244,239,228,0.55)",
+          backdropFilter: "blur(6px)",
+          WebkitBackdropFilter: "blur(6px)",
           opacity: open ? 1 : 0,
           pointerEvents: open ? "auto" : "none",
-          transition: "opacity 0.3s ease",
+          transition: "opacity 0.25s ease",
         }}
       />
 
-      {/* Mobile Menu */}
       <div
-        className="fixed top-0 right-0 h-full w-72 z-70 sm:hidden flex flex-col"
+        className="fixed top-0 right-0 h-full w-72 z-[70] sm:hidden flex flex-col bg-[#f4efe4] border-l-4 border-black"
         style={{
-          background: "#0d0d18",
-          borderLeft: "1px solid #1e1e2e",
           transform: open ? "translateX(0)" : "translateX(100%)",
-          transition: "transform 0.35s cubic-bezier(0.4, 0, 0.2, 1)",
+          transition: "transform 0.3s cubic-bezier(0.4,0,0.2,1)",
+          ...navFont,
         }}
       >
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#1e1e2e]">
-          <span className="text-[#00ff88] font-black font-mono text-base tracking-tight">
-            NzrCTF<span className="text-white"> Lab</span>
+        <div className="flex items-center justify-between px-5 py-4 border-b-4 border-black bg-white">
+          <span className="font-black text-base tracking-tight" style={navFont}>
+            NzrCTF<span className="text-[#00e676]"> Lab</span>
           </span>
-          <button onClick={() => setOpen(false)} className="text-[#555570] hover:text-white transition-colors">
-            <X size={18} />
+          <button
+            onClick={() => setOpen(false)}
+            className={`border-2 border-black p-1 bg-white ${press}`}
+          >
+            <X size={16} strokeWidth={3} />
           </button>
         </div>
 
         {isLoggedIn ? (
           <>
-            <div className="px-5 py-4 border-b border-[#1e1e2e]">
-              <Link
-                href="/account"
-                style={{ clipPath: "polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%)" }}
-                className={`block bg-[#11111a] border px-4 py-3 transition-all ${
-                  pathname.startsWith("/account") ? "border-[#00ff88]/30" : "border-[#1e1e2e] hover:border-[#333355]"
-                }`}
-              >
-                <div className="flex items-center gap-2.5 mb-2">
-                  <div
-                    style={{ clipPath: "polygon(0 0, calc(100% - 5px) 0, 100% 5px, 100% 100%, 0 100%)" }}
-                    className="w-8 h-8 bg-[#00ff88]/10 border border-[#00ff88]/30 flex items-center justify-center shrink-0"
-                  >
-                    <User size={14} className="text-[#00ff88]" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="text-white font-bold text-sm font-mono truncate">{displayName}</div>
-                    {email && username && (
-                      <div className="text-[#555570] font-mono text-xs truncate">{email}</div>
-                    )}
-                  </div>
-                  <ChevronRight size={13} className="text-[#555570] shrink-0" />
+            <Link
+              href="/account"
+              className={`mx-4 mt-4 border-4 border-black p-4 ${pressBig} ${
+                pathname.startsWith("/account") ? "bg-[#00e676]" : "bg-white"
+              }`}
+              style={{ clipPath: CUT }}
+            >
+              <div className="flex items-center gap-2.5 mb-2">
+                <div
+                  className="w-8 h-8 bg-black flex items-center justify-center shrink-0"
+                  style={{ clipPath: CUT_SM }}
+                >
+                  <User size={14} color="#00e676" strokeWidth={2.5} />
                 </div>
-                <div className="flex items-center gap-1.5 text-[#00ff88] font-mono text-xs font-bold">
-                  <Trophy size={11} />
-                  <span>{totalPoints} pts</span>
+                <div className="min-w-0 flex-1">
+                  <div className="font-black text-sm uppercase truncate" style={navFont}>{displayName}</div>
+                  {email && username && (
+                    <div className="text-[#666] text-xs truncate" style={monoFont}>{email}</div>
+                  )}
                 </div>
-              </Link>
-            </div>
+                <ArrowRight size={14} strokeWidth={3} className="shrink-0" />
+              </div>
+              <div className="flex items-center gap-1.5 text-xs font-black uppercase" style={monoFont}>
+                <Trophy size={11} strokeWidth={3} />
+                {totalPoints} pts
+              </div>
+            </Link>
 
-            <div className="flex-1 px-4 py-4 flex flex-col gap-1.5 overflow-y-auto">
-              <Link
-                href="/lab"
-                style={{ clipPath: "polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%)" }}
-                className={`flex items-center gap-3 px-4 py-3 font-mono text-sm font-bold transition-all ${
-                  pathname.startsWith("/lab")
-                    ? "bg-[#00ff88]/10 border border-[#00ff88]/30 text-[#00ff88]"
-                    : "bg-[#11111a] border border-[#1e1e2e] text-[#555570] hover:text-white hover:border-[#333355]"
-                }`}
-              >
-                <FlaskConical size={15} />
-                Lab
-                {pathname.startsWith("/lab") && <ChevronRight size={13} className="ml-auto" />}
-              </Link>
+            <div className="flex-1 px-4 py-4 flex flex-col gap-2 overflow-y-auto">
+              {[
+                { href: "/lab",         label: "Lab",         icon: FlaskConical },
+                { href: "/leaderboard", label: "Leaderboard", icon: BarChart2    },
+                { href: "/submissions", label: "Submissions",  icon: BookOpenText },
+              ].map((item) => {
+                const Icon = item.icon
+                const active = pathname.startsWith(item.href)
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`flex items-center gap-3 px-4 py-3 border-4 border-black font-black text-sm uppercase transition-all ${
+                      active
+                        ? "bg-black text-white shadow-none translate-x-[4px] translate-y-[4px]"
+                        : `bg-white text-black ${pressBig}`
+                    }`}
+                    style={{ ...navFont, clipPath: CUT }}
+                  >
+                    <Icon size={15} strokeWidth={active ? 2.5 : 2} />
+                    {item.label}
+                    {active && <ArrowRight size={13} strokeWidth={3} className="ml-auto" />}
+                  </Link>
+                )
+              })}
 
               <div>
                 <button
                   onClick={() => setChallengesOpen(!challengesOpen)}
-                  style={{ clipPath: "polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%)" }}
-                  className={`w-full flex items-center gap-3 px-4 py-3 font-mono text-sm font-bold transition-all ${
+                  className={`w-full flex items-center gap-3 px-4 py-3 border-4 border-black font-black text-sm uppercase transition-all ${
                     isChallengeActive
-                      ? "bg-[#00ff88]/10 border border-[#00ff88]/30 text-[#00ff88]"
-                      : "bg-[#11111a] border border-[#1e1e2e] text-[#555570] hover:text-white hover:border-[#333355]"
+                      ? "bg-black text-white shadow-none translate-x-[4px] translate-y-[4px]"
+                      : `bg-white text-black ${pressBig}`
                   }`}
+                  style={{ ...navFont, clipPath: CUT }}
                 >
-                  <Swords size={15} />
+                  <Swords size={15} strokeWidth={2} />
                   Challenges
                   <ChevronDown
                     size={13}
+                    strokeWidth={3}
                     className="ml-auto transition-transform duration-200"
                     style={{ transform: challengesOpen ? "rotate(180deg)" : "rotate(0deg)" }}
                   />
                 </button>
+
                 <div
                   className="overflow-hidden transition-all duration-200"
-                  style={{ maxHeight: challengesOpen ? "300px" : "0px" }}
+                  style={{ maxHeight: challengesOpen ? "400px" : "0px" }}
                 >
-                  <div className="pl-4 pt-1.5 flex flex-col gap-1.5">
-                    {chapters.map((chapter) => {
-                      const Icon = chapter.icon
-                      const active = pathname === `/challenge/${chapter.slug}`
+                  <div className="pl-3 pt-2 flex flex-col gap-2">
+                    {chapters.map((ch) => {
+                      const Icon = ch.icon
+                      const active = pathname === `/challenge/${ch.slug}`
                       return (
                         <Link
-                          key={chapter.slug}
-                          href={`/challenge/${chapter.slug}`}
-                          style={{ clipPath: "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%)" }}
-                          className={`flex items-center gap-2.5 px-3 py-2.5 font-mono text-xs font-bold transition-all ${
+                          key={ch.slug}
+                          href={`/challenge/${ch.slug}`}
+                          className={`flex items-center gap-2.5 px-3 py-2.5 border-4 border-black text-xs font-black uppercase transition-all ${
                             active
-                              ? `bg-[#0a0a0f] border ${chapter.border} ${chapter.color}`
-                              : "bg-[#0a0a0f] border border-[#1e1e2e] text-[#555570] hover:text-white hover:border-[#333355]"
+                              ? "shadow-none translate-x-[3px] translate-y-[3px]"
+                              : press
                           }`}
+                          style={{
+                            ...navFont,
+                            clipPath: CUT,
+                            backgroundColor: active ? ch.accent : "white",
+                            color: active ? "white" : "#111",
+                          }}
                         >
-                          <Icon size={13} className={active ? chapter.color : ""} />
-                          {chapter.label}
-                          {active && <ChevronRight size={11} className="ml-auto" />}
+                          <Icon size={13} strokeWidth={2.5} />
+                          {ch.label}
+                          {active && <ArrowRight size={11} strokeWidth={3} className="ml-auto" />}
                         </Link>
                       )
                     })}
                   </div>
                 </div>
               </div>
-
-              <Link
-                href="/leaderboard"
-                style={{ clipPath: "polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%)" }}
-                className={`flex items-center gap-3 px-4 py-3 font-mono text-sm font-bold transition-all ${
-                  pathname.startsWith("/leaderboard")
-                    ? "bg-[#00ff88]/10 border border-[#00ff88]/30 text-[#00ff88]"
-                    : "bg-[#11111a] border border-[#1e1e2e] text-[#555570] hover:text-white hover:border-[#333355]"
-                }`}
-              >
-                <BarChart2 size={15} />
-                Leaderboard
-                {pathname.startsWith("/leaderboard") && <ChevronRight size={13} className="ml-auto" />}
-              </Link>
-
-              <Link
-                href="/submissions"
-                style={{ clipPath: "polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%)" }}
-                className={`flex items-center gap-3 px-4 py-3 font-mono text-sm font-bold transition-all ${
-                  pathname.startsWith("/submissions")
-                    ? "bg-[#00ff88]/10 border border-[#00ff88]/30 text-[#00ff88]"
-                    : "bg-[#11111a] border border-[#1e1e2e] text-[#555570] hover:text-white hover:border-[#333355]"
-                }`}
-              >
-                <BookOpenText size={15} />
-                Submissions
-                {pathname.startsWith("/submissions") && <ChevronRight size={13} className="ml-auto" />}
-              </Link>
             </div>
 
-            <div className="px-4 py-4 border-t border-[#1e1e2e]">
+            <div className="px-4 py-4 border-t-4 border-black">
               {logoutAction && (
                 <form action={logoutAction}>
                   <button
                     type="submit"
-                    style={{ clipPath: "polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%)" }}
-                    className="w-full flex items-center gap-3 px-4 py-3 bg-[#11111a] border border-[#ff3c6e]/20 text-[#ff3c6e] font-mono text-sm font-bold hover:border-[#ff3c6e]/40 transition-all"
+                    className={`w-full flex items-center gap-3 px-4 py-3 border-4 border-black bg-[#ff3c6e] text-white font-black text-sm uppercase ${pressBig}`}
+                    style={{ ...navFont, clipPath: CUT }}
                   >
-                    <LogOut size={15} />
+                    <LogOut size={15} strokeWidth={2.5} />
                     Logout
                   </button>
                 </form>
@@ -299,17 +327,17 @@ export default function Navbar({ username, email, totalPoints = 0, isLoggedIn, l
           <div className="flex-1 px-4 py-6 flex flex-col gap-3">
             <Link
               href="/login"
-              style={{ clipPath: "polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%)" }}
-              className="flex items-center justify-center px-4 py-3 bg-[#11111a] border border-[#1e1e2e] text-white font-mono text-sm font-bold hover:border-[#333355] transition-all"
+              className={`flex items-center justify-center px-4 py-3 border-4 border-black bg-white text-black font-black text-sm uppercase ${pressBig}`}
+              style={{ ...navFont, clipPath: CUT }}
             >
-              Login
+              Sign In
             </Link>
             <Link
               href="/register"
-              style={{ clipPath: "polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%)" }}
-              className="flex items-center justify-center gap-2 px-4 py-3 bg-[#00ff88] text-black font-mono text-sm font-bold hover:opacity-90 transition-all"
+              className={`flex items-center justify-center gap-2 px-4 py-3 border-4 border-black bg-[#00e676] text-black font-black text-sm uppercase ${pressBig}`}
+              style={{ ...navFont, clipPath: CUT }}
             >
-              Register <ChevronRight size={13} />
+              Register <ArrowRight size={13} strokeWidth={3} />
             </Link>
           </div>
         )}

@@ -3,6 +3,13 @@ import { createClient } from "@/lib/supabase/server"
 import NavbarServer from "@/components/navbar-server"
 import { User, Mail, Calendar, Trophy, CheckCircle } from "lucide-react"
 
+const CUT     = "polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px))"
+const CUT_SM  = "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))"
+const CUT_BTN = "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%)"
+
+const navFont  = { fontFamily: "'Arial Black', Impact, sans-serif" }
+const monoFont = { fontFamily: "'Courier New', monospace" }
+
 export default async function AccountPage() {
   const supabase = await createClient()
 
@@ -45,153 +52,156 @@ export default async function AccountPage() {
       })
     : "—"
 
+  const solvePercent = challenges?.length
+    ? Math.round((solvedIds.size / challenges.length) * 100)
+    : 0
+
   return (
-    <div className="min-h-screen bg-[#0a0a0f] text-white">
+    <div className="min-h-screen bg-[#f4efe4] text-black" style={navFont}>
       <NavbarServer />
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
 
-        <div className="mb-8">
-          <p className="text-[#555570] font-mono text-xs tracking-widest mb-1">
-            Account
-          </p>
-          <h1 className="text-2xl font-black">My Profile</h1>
+        <div
+          className="bg-white border-4 border-black shadow-[8px_8px_0_#111] p-6 relative overflow-hidden mb-5 sm:col-span-2"
+          style={{ clipPath: CUT }}
+        >
+          <div className="absolute top-0 right-0 w-0 h-0 border-t-[48px] border-r-[48px] border-t-[#00e676] border-r-transparent" />
+
+          <div className="flex items-center gap-4 mb-6">
+            <div
+              className="w-14 h-14 bg-black flex items-center justify-center shrink-0 border-4 border-black"
+              style={{ clipPath: CUT_SM }}
+            >
+              <User size={24} color="#00e676" strokeWidth={2.5} />
+            </div>
+            <div>
+              <h2 className="text-xl font-black" style={navFont}>
+                {profile?.username ?? "—"}
+              </h2>
+              <p className="text-[#888] text-xs font-bold mt-0.5" style={monoFont}>
+                {user.email}
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {[
+              { val: totalPoints,             label: "Points",           highlight: true  },
+              { val: solvedIds.size,           label: "Solved",           highlight: true  },
+              { val: challenges?.length ?? 0,  label: "Total Challenges", highlight: false },
+            ].map((stat) => (
+              <div
+                key={stat.label}
+                className="border-4 border-black px-4 py-3"
+                style={{
+                  clipPath: CUT_BTN,
+                  backgroundColor: stat.highlight ? "#00e676" : "#f4efe4",
+                }}
+              >
+                <div className="font-black text-2xl text-black" style={navFont}>{stat.val}</div>
+                <div className="text-xs font-black tracking-widest text-[#444] mt-0.5" style={monoFont}>
+                  {stat.label}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
+
           <div
-            style={{ clipPath: "polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px))" }}
-            className="bg-[#11111a] border border-[#1e1e2e] p-6 sm:col-span-2"
+            className="bg-white border-4 border-black shadow-[6px_6px_0_#111] p-5"
+            style={{ clipPath: CUT }}
           >
-            <div className="flex items-center gap-4 mb-6">
-              <div
-                style={{ clipPath: "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%)" }}
-                className="w-14 h-14 bg-[#00ff88]/10 border border-[#00ff88]/30 flex items-center justify-center shrink-0"
-              >
-                <User size={24} className="text-[#00ff88]" />
-              </div>
-              <div>
-                <h2 className="text-xl font-black font-mono">{profile?.username ?? "—"}</h2>
-                <p className="text-[#555570] font-mono text-xs mt-0.5">{user.email}</p>
-              </div>
+            <div className="flex items-center gap-2 mb-5">
+              <div className="w-3 h-7 bg-black" />
+              <p className="text-xs font-black tracking-widest text-[#888]" style={monoFont}>
+                Account Details
+              </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="flex flex-col gap-4">
               {[
-                { val: totalPoints, label: "POINTS", color: "text-[#00ff88]", accent: "border-[#00ff88]/20" },
-                { val: solvedIds.size, label: "SOLVED", color: "text-[#00ff88]", accent: "border-[#00ff88]/20" },
-                { val: challenges?.length ?? 0, label: "TOTAL CHALLENGES", color: "text-white", accent: "border-[#1e1e2e]" },
-              ].map((stat) => (
-                <div
-                  key={stat.label}
-                  style={{ clipPath: "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%)" }}
-                  className={`bg-[#0a0a0f] border ${stat.accent} px-4 py-3`}
-                >
-                  <div className={`${stat.color} font-black font-mono text-2xl`}>{stat.val}</div>
-                  <div className="text-[#555570] font-mono text-xs mt-0.5">{stat.label}</div>
+                { icon: User,     label: "Username", val: profile?.username ?? "—" },
+                { icon: Mail,     label: "Email",    val: user.email ?? "—"         },
+                { icon: Calendar, label: "Joined",   val: joinedDate                },
+              ].map(({ icon: Icon, label, val }) => (
+                <div key={label} className="flex items-start gap-3">
+                  <div
+                    className="w-8 h-8 bg-[#f4efe4] border-4 border-black flex items-center justify-center shrink-0"
+                    style={{ clipPath: CUT_SM }}
+                  >
+                    <Icon size={13} strokeWidth={2.5} />
+                  </div>
+                  <div>
+                    <p className="text-[#888] text-xs font-black tracking-widest mb-0.5" style={monoFont}>
+                      {label}
+                    </p>
+                    <p className="text-black text-sm font-black" style={monoFont}>{val}</p>
+                  </div>
                 </div>
               ))}
             </div>
           </div>
 
           <div
-            style={{ clipPath: "polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px))" }}
-            className="bg-[#11111a] border border-[#1e1e2e] p-5"
+            className="bg-white border-4 border-black shadow-[6px_6px_0_#111] p-5"
+            style={{ clipPath: CUT }}
           >
-            <p className="text-[#555570] font-mono text-xs tracking-widest mb-4">
-              Account Details
-            </p>
-            <div className="flex flex-col gap-4">
-              <div className="flex items-start gap-3">
-                <div
-                  style={{ clipPath: "polygon(0 0, calc(100% - 5px) 0, 100% 5px, 100% 100%, 0 100%)" }}
-                  className="w-8 h-8 bg-[#0a0a0f] border border-[#1e1e2e] flex items-center justify-center shrink-0"
-                >
-                  <User size={13} className="text-[#555570]" />
-                </div>
-                <div>
-                  <p className="text-[#555570] font-mono text-xs uppercase tracking-widest mb-0.5">Username</p>
-                  <p className="text-white font-mono text-sm font-bold">{profile?.username ?? "—"}</p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3">
-                <div
-                  style={{ clipPath: "polygon(0 0, calc(100% - 5px) 0, 100% 5px, 100% 100%, 0 100%)" }}
-                  className="w-8 h-8 bg-[#0a0a0f] border border-[#1e1e2e] flex items-center justify-center shrink-0"
-                >
-                  <Mail size={13} className="text-[#555570]" />
-                </div>
-                <div>
-                  <p className="text-[#555570] font-mono text-xs uppercase tracking-widest mb-0.5">Email</p>
-                  <p className="text-white font-mono text-sm font-bold">{user.email ?? "—"}</p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3">
-                <div
-                  style={{ clipPath: "polygon(0 0, calc(100% - 5px) 0, 100% 5px, 100% 100%, 0 100%)" }}
-                  className="w-8 h-8 bg-[#0a0a0f] border border-[#1e1e2e] flex items-center justify-center shrink-0"
-                >
-                  <Calendar size={13} className="text-[#555570]" />
-                </div>
-                <div>
-                  <p className="text-[#555570] font-mono text-xs uppercase tracking-widest mb-0.5">Joined</p>
-                  <p className="text-white font-mono text-sm font-bold">{joinedDate}</p>
-                </div>
-              </div>
+            <div className="flex items-center gap-2 mb-5">
+              <div className="w-3 h-7 bg-[#00e676] border-r-4 border-black" />
+              <p className="text-xs font-black tracking-widest text-[#888]" style={monoFont}>
+                Progress
+              </p>
             </div>
-          </div>
 
-          <div
-            style={{ clipPath: "polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px))" }}
-            className="bg-[#11111a] border border-[#1e1e2e] p-5"
-          >
-            <p className="text-[#555570] font-mono text-xs tracking-widest mb-4">
-              Progress
-            </p>
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-5">
               <div className="flex items-start gap-3">
                 <div
-                  style={{ clipPath: "polygon(0 0, calc(100% - 5px) 0, 100% 5px, 100% 100%, 0 100%)" }}
-                  className="w-8 h-8 bg-[#0a0a0f] border border-[#00ff88]/20 flex items-center justify-center shrink-0"
+                  className="w-8 h-8 bg-[#00e676] border-4 border-black flex items-center justify-center shrink-0"
+                  style={{ clipPath: CUT_SM }}
                 >
-                  <Trophy size={13} className="text-[#00ff88]" />
+                  <Trophy size={13} color="#111" strokeWidth={2.5} />
                 </div>
                 <div>
-                  <p className="text-[#555570] font-mono text-xs uppercase tracking-widest mb-0.5">Total Points</p>
-                  <p className="text-[#00ff88] font-mono text-sm font-black">{totalPoints} pts</p>
+                  <p className="text-[#888] text-xs font-black tracking-widest mb-0.5" style={monoFont}>
+                    Total Points
+                  </p>
+                  <p className="text-black text-sm font-black" style={monoFont}>
+                    {totalPoints} Points
+                  </p>
                 </div>
               </div>
 
               <div className="flex items-start gap-3">
                 <div
-                  style={{ clipPath: "polygon(0 0, calc(100% - 5px) 0, 100% 5px, 100% 100%, 0 100%)" }}
-                  className="w-8 h-8 bg-[#0a0a0f] border border-[#00ff88]/20 flex items-center justify-center shrink-0"
+                  className="w-8 h-8 bg-[#00e676] border-4 border-black flex items-center justify-center shrink-0"
+                  style={{ clipPath: CUT_SM }}
                 >
-                  <CheckCircle size={13} className="text-[#00ff88]" />
+                  <CheckCircle size={13} color="#111" strokeWidth={2.5} />
                 </div>
-                <div>
-                  <p className="text-[#555570] font-mono text-xs uppercase tracking-widest mb-0.5">Challenges Solved</p>
-                  <p className="text-white font-mono text-sm font-bold">
-                    {solvedIds.size}
-                    <span className="text-[#555570] font-normal"> / {challenges?.length ?? 0}</span>
+                <div className="flex-1">
+                  <p className="text-[#888] text-xs font-black tracking-widest mb-0.5" style={monoFont}>
+                    Challenges Solved
                   </p>
-                  <div className="mt-2 w-full max-w-[160px] h-1.5 bg-[#1e1e2e] rounded-full overflow-hidden">
+                  <p className="text-black text-sm font-black mb-2" style={monoFont}>
+                    {solvedIds.size}
+                    <span className="text-[#aaa] font-bold"> / {challenges?.length ?? 0}</span>
+                  </p>
+                  <div className="w-full max-w-[160px] h-1.5 bg-[#e0dbd2] rounded-full overflow-hidden">
                     <div
-                      className="h-full rounded-full bg-[#00ff88]"
-                      style={{
-                        width: challenges?.length
-                          ? `${Math.round((solvedIds.size / challenges.length) * 100)}%`
-                          : "0%",
-                      }}
+                      className="h-full rounded-full bg-[#00e676]"
+                      style={{ width: `${solvePercent}%` }}
                     />
                   </div>
+                  <p className="text-xs font-black mt-1" style={{ ...monoFont, color: "#00c45a" }}>
+                    {solvePercent}%
+                  </p>
                 </div>
               </div>
             </div>
           </div>
-
         </div>
       </main>
     </div>
