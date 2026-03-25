@@ -6,11 +6,11 @@ const supabaseWss = supabaseUrl.replace("https://", "wss://");
 
 const cspHeader = `
   default-src 'self';
-  script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""};
+  script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com${isDev ? " 'unsafe-eval'" : ""};
   style-src 'self' 'unsafe-inline';
   img-src 'self' blob: data:;
   font-src 'self';
-  connect-src 'self' ${supabaseUrl} ${supabaseWss};
+  connect-src 'self' ${supabaseUrl} ${supabaseWss} https://cloudflareinsights.com;
   object-src 'none';
   base-uri 'self';
   form-action 'self';
