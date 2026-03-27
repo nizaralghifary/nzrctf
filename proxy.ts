@@ -41,18 +41,14 @@ export async function proxy(request: NextRequest) {
     request.nextUrl.pathname.startsWith("/register")
 
   const isProtectedRoute = 
-    request.nextUrl.pathname.startsWith("/lab") ||
-    request.nextUrl.pathname.startsWith("/challenge") ||
-    request.nextUrl.pathname.startsWith("/submissions") ||
-    request.nextUrl.pathname.startsWith("/leaderboard") ||
-    request.nextUrl.pathname.startsWith("/account")
+    request.nextUrl.pathname.startsWith("/lab/:path*")
 
   if (!user && isProtectedRoute) {
     return NextResponse.redirect(new URL("/login", request.url))
   }
 
   if (user && isAuthRoute) {
-    return NextResponse.redirect(new URL("/lab", request.url))
+    return NextResponse.redirect(new URL("/lab/:path*", request.url))
   }
 
   return supabaseResponse

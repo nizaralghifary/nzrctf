@@ -1,30 +1,107 @@
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap');
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@keyframes growWidth {
-  from { width: 0%; }
+  --background: #f0ebe0;
+  --foreground: #111111;
+  --accent: #ff3c00;
+  --ink: #111111;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-mono: 'DM Mono', var(--font-geist-mono), monospace;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'DM Mono', monospace;
+}
+
+::selection {
+  background: var(--accent);
+  color: #f0ebe0;
+}
+
+@keyframes growWidth {
+  from { width: 0%; }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.fade-up {
+  animation: fadeUp 0.5s ease both;
+}
+
+.nb-card {
+  border: 3px solid var(--ink);
+  box-shadow: 5px 5px 0 var(--ink);
+  background: #f0ebe0;
+  transition: box-shadow 0.12s, transform 0.12s;
+}
+
+.nb-card:hover {
+  box-shadow: 2px 2px 0 var(--ink);
+  transform: translate(3px, 3px);
+}
+
+.nb-card-white {
+  border: 3px solid var(--ink);
+  box-shadow: 5px 5px 0 var(--ink);
+  background: #fff;
+  transition: box-shadow 0.12s, transform 0.12s;
+}
+
+.nb-card-white:hover {
+  box-shadow: 2px 2px 0 var(--ink);
+  transform: translate(3px, 3px);
+}
+
+.nb-btn {
+  border: 3px solid var(--ink);
+  box-shadow: 4px 4px 0 var(--ink);
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  transition: box-shadow 0.1s, transform 0.1s;
+}
+
+.nb-btn:hover {
+  box-shadow: 1px 1px 0 var(--ink);
+  transform: translate(3px, 3px);
+}
+
+.nb-btn:active {
+  box-shadow: none;
+  transform: translate(4px, 4px);
+}
+
+.nb-tag {
+  border: 2px solid var(--ink);
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  font-weight: 500;
+  padding: 2px 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.nb-tag-easy   { background: #b8f5a0; }
+.nb-tag-medium { background: #ffe87a; }
+.nb-tag-hard   { background: #ffb3b3; }
+
+.nb-underline {
+  text-decoration: underline;
+  text-decoration-thickness: 3px;
+  text-underline-offset: 4px;
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
 }

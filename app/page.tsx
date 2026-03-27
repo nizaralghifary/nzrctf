@@ -1,87 +1,11 @@
 import Link from "next/link"
 import { createClient } from "@/lib/supabase/server"
 import NavbarServer from "@/components/navbar-server"
-import {
-  Database,
-  Code2,
-  ShieldOff,
-  Globe,
-  UserPlus,
-  LayoutDashboard,
-  Flag,
-  Trophy,
-  ArrowRight,
-  Zap,
-} from "lucide-react"
-
-const CUT = "polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px))"
-const CUT_SM = "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px))"
-const CUT_BTN = "polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%)"
-const CUT_BADGE = "polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 0 100%)"
-
-const features = [
-  {
-    icon: Database,
-    title: "SQL Injection",
-    description: "Bypass login panels, dump database contents, exploit unsanitized queries. Classic but never gets old.",
-    accent: "#ff3c6e",
-    bg: "#fff0f3",
-  },
-  {
-    icon: Code2,
-    title: "Cross-Site Scripting",
-    description: "Inject scripts, steal cookies, hijack sessions. The browser is your playground.",
-    accent: "#e6c200",
-    bg: "#fffbe0",
-  },
-  {
-    icon: ShieldOff,
-    title: "Broken Access Control",
-    description: "Touch things you're not supposed to. Manipulate references, escalate privileges, go where you shouldn't.",
-    accent: "#0066ff",
-    bg: "#eef3ff",
-  },
-  {
-    icon: Globe,
-    title: "SSRF / LFI / XXE",
-    description: "Hit internal services, read sensitive files, bend XML parsers to your will.",
-    accent: "#9900cc",
-    bg: "#f8eeff",
-  },
-]
-
-const steps = [
-  {
-    num: "01",
-    icon: UserPlus,
-    title: "Make an account",
-    desc: "Pick a username, drop your email, set a password. That's it.",
-  },
-  {
-    num: "02",
-    icon: LayoutDashboard,
-    title: "Pick a challenge",
-    desc: "Four categories of web security chaos. Start wherever you want.",
-  },
-  {
-    num: "03",
-    icon: Flag,
-    title: "Hunt the flag",
-    desc: "Find the vulnerability, exploit it, grab the hidden flag.",
-  },
-  {
-    num: "04",
-    icon: Trophy,
-    title: "Submit & score",
-    desc: "Drop the flag, collect points, climb the board.",
-  },
-]
+import { Database, Code2, ShieldOff, Globe, UserPlus, LayoutDashboard, Flag, Trophy, ArrowRight } from "lucide-react"
 
 export default async function Home() {
   const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const { data: { user } } = await supabase.auth.getUser()
 
   let profile = null
   if (user) {
@@ -93,210 +17,237 @@ export default async function Home() {
     profile = data ? { username: data.username } : null
   }
 
+  const categories = [
+    { tag: "sqli", title: "SQL Injection", desc: "Bypass logins, dump tables, read data you're not supposed to see. Old school, still hits.", icon: Database },
+    { tag: "xss", title: "Cross-Site Scripting", desc: "Inject scripts, steal cookies, hijack sessions. The browser is your weapon.", icon: Code2 },
+    { tag: "bac", title: "Broken Access Control", desc: "Access endpoints you shouldn't, manipulate references, escalate your way up.", icon: ShieldOff },
+    { tag: "ssrf", title: "SSRF / LFI / XXE", desc: "Hit internal services, read sensitive files, bend XML parsers to your will.", icon: Globe }
+  ]
+
+  const steps = [
+    { n: "01", title: "Make an account", desc: "Pick a username, drop your email, set a password. That's it.", icon: UserPlus },
+    { n: "02", title: "Pick a challenge", desc: "Four categories, start anywhere. Go at your own pace.", icon: LayoutDashboard },
+    { n: "03", title: "Find and exploit", desc: "Spot the vulnerability, exploit it, grab the hidden flag.", icon: Flag },
+    { n: "04", title: "Submit and score", desc: "Drop the flag, collect your points, climb the board.", icon: Trophy }
+  ]
+
   return (
-    <div
-      className="min-h-screen bg-[#f4efe4] text-[#111]"
-      style={{ fontFamily: "'Arial Black', 'Haettenschweiler', Impact, sans-serif" }}
-    >
+    <div className="min-h-screen bg-[#f0ebe0] text-[#111]">
       <NavbarServer />
 
-      <section className="max-w-5xl mx-auto px-5 pt-16 pb-12">
-        <div
-          className="bg-white border-4 border-black shadow-[10px_10px_0_#111] p-8 md:p-12 relative overflow-hidden"
-          style={{ clipPath: CUT }}
-        >
-          <div className="absolute top-0 right-0 w-0 h-0 border-t-[72px] border-r-[72px] border-t-[#00e676] border-r-transparent" />
+      <section className="max-w-5xl mx-auto px-6 pt-14 pb-4 fade-up">
+        <div className="grid md:grid-cols-[1fr_auto] gap-8 items-end">
+          <div>
+            <p className="font-mono text-xs text-[#888] mb-5">
+              Web Exploit CTF Platform
+            </p>
+            <h1
+              className="text-[clamp(3.2rem,10vw,7rem)] leading-none tracking-tight uppercase mb-6"
+              style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800 }}
+            >
+              Learn<br />
+              to{" "}
+              <span
+                className="inline-block bg-[#ff3c00] text-[#f0ebe0] px-3 leading-tight"
+                style={{ transform: "rotate(-1.5deg)", display: "inline-block" }}
+              >
+                Break
+              </span>
+              <br />
+              Stuff
+            </h1>
 
-          <div
-            className="inline-block bg-[#00e676] border-2 border-black px-3 py-1 text-xs font-black uppercase tracking-widest mb-7"
-            style={{ fontFamily: "monospace", clipPath: CUT_BADGE, transform: "rotate(-1.2deg)" }}
-          >
-            Web Security CTF Platform
+            <p className="font-mono text-sm text-[#444] max-w-md leading-relaxed mb-8">
+              Hands-on CTF for real web vulnerabilities. No slides —
+              just a broken app and a flag to find.
+            </p>
+
+            <div className="flex flex-wrap gap-3">
+              <Link
+                href={user ? "/lab" : "/register"}
+                className="nb-btn bg-[#ff3c00] text-[#f0ebe0] text-sm px-7 py-3 inline-flex items-center gap-2"
+              >
+                {user ? "Go to Lab" : "Start Hacking"} <ArrowRight size={14} strokeWidth={2.5} />
+              </Link>
+              {!user && (
+                <Link href="/login" className="nb-btn bg-[#f0ebe0] text-[#111] text-sm px-6 py-3">
+                  Login
+                </Link>
+              )}
+            </div>
           </div>
 
-          <h1
-            className="text-5xl md:text-7xl font-black uppercase leading-none mb-6 tracking-tight"
-            style={{ fontFamily: "'Arial Black', Impact, sans-serif", lineHeight: 0.92 }}
+          <div
+            className="hidden md:flex flex-col items-start mb-1 shrink-0 pr-8"
+            style={{ gap: "10px" }}
           >
-            Learn Security
-            <br />
-            <span
-              className="bg-black text-white px-2 py-1"
-              style={{ display: "inline-block", transform: "skewX(-2deg)", clipPath: CUT_BTN }}
+            <div
+              className="border-[3px] border-[#111] px-6 py-4 text-center"
+              style={{ background: "#fff", transform: "rotate(-2.4deg) translateX(8px)", boxShadow: "4px 4px 0 #111", width: "130px" }}
             >
-              By Breaking
-            </span>
-            <br />
-            Stuff
-          </h1>
+              <div className="text-4xl leading-none" style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800 }}>7+</div>
+              <div className="font-mono text-[10px] text-[#555] mt-0.5">challenges</div>
+            </div>
+            <div
+              className="border-[3px] border-[#111] px-4 py-2 text-center"
+              style={{ background: "#ffe87a", transform: "rotate(1.6deg) translateX(-4px)", boxShadow: "3px 3px 0 #111", width: "100px" }}
+            >
+              <div className="text-2xl leading-none" style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800 }}>4</div>
+              <div className="font-mono text-[10px] text-[#555] mt-0.5">categories</div>
+            </div>
+            <div
+              className="border-[3px] border-[#111] px-5 py-3 text-center"
+              style={{ background: "#b8f5a0", transform: "rotate(-1.1deg) translateX(12px)", boxShadow: "3px 3px 0 #111", width: "115px" }}
+            >
+              <div className="text-3xl leading-none" style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800 }}>3</div>
+              <div className="font-mono text-[10px] text-[#555] mt-0.5">difficulties</div>
+            </div>
+          </div>
 
-          <p
-            className="text-[15px] font-bold text-[#444] max-w-lg mt-4 mb-9 leading-snug"
-            style={{ fontFamily: "'Courier New', monospace" }}
+          <div className="md:hidden flex mt-8" style={{ position: "relative", height: "90px" }}>
+            <div
+              className="border-[3px] border-[#111] px-5 py-3 text-center absolute"
+              style={{ background: "#fff", transform: "rotate(-2.4deg)", boxShadow: "4px 4px 0 #111", width: "110px", left: "0px", top: "0px" }}
+            >
+              <div className="text-3xl leading-none" style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800 }}>7+</div>
+              <div className="font-mono text-[10px] text-[#555] mt-0.5">challenges</div>
+            </div>
+            <div
+              className="border-[3px] border-[#111] px-4 py-2 text-center absolute"
+              style={{ background: "#ffe87a", transform: "rotate(2.8deg)", boxShadow: "3px 3px 0 #111", width: "90px", left: "100px", top: "12px" }}
+            >
+              <div className="text-2xl leading-none" style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800 }}>4</div>
+              <div className="font-mono text-[10px] text-[#555] mt-0.5">categories</div>
+            </div>
+            <div
+              className="border-[3px] border-[#111] px-4 py-2 text-center absolute"
+              style={{ background: "#b8f5a0", transform: "rotate(-1.8deg)", boxShadow: "3px 3px 0 #111", width: "100px", left: "188px", top: "4px" }}
+            >
+              <div className="text-2xl leading-none" style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800 }}>3</div>
+              <div className="font-mono text-[10px] text-[#555] mt-0.5">difficulties</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="max-w-5xl mx-auto px-6 py-10">
+        <h2 className="text-2xl mb-8" style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800 }}>
+          What You'll Break
+        </h2>
+
+        <div className="grid md:grid-cols-[1.4fr_1fr] gap-5">
+          <div className="nb-card-white p-7 flex flex-col justify-between min-h-[240px]">
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-8 h-8 bg-[#111] flex items-center justify-center shrink-0">
+                  <Database size={14} color="#f0ebe0" strokeWidth={2} />
+                </div>
+                <span className="font-mono text-xs text-[#888]">[{categories[0].tag}]</span>
+              </div>
+              <h3 className="text-3xl leading-tight mb-3" style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800 }}>
+                {categories[0].title}
+              </h3>
+              <p className="font-mono text-sm text-[#555] leading-relaxed">
+                {categories[0].desc}
+              </p>
+            </div>
+            <div
+              className="mt-3 text-[100px] leading-none select-none text-right"
+              style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, color: "transparent", WebkitTextStroke: "2px #e8e2d8" }}
+            >
+              01
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-5">
+            {categories.slice(1).map((f, i) => {
+              const Icon = f.icon
+              return (
+                <div key={f.tag} className="nb-card-white p-5 flex gap-4 items-start">
+                  <div className="w-8 h-8 bg-[#111] flex items-center justify-center shrink-0">
+                    <Icon size={14} color="#f0ebe0" strokeWidth={2} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <span className="font-mono text-[10px] text-[#888]">[{f.tag}]</span>
+                    <h3 className="text-base mb-1 mt-0.5" style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800 }}>
+                      {f.title}
+                    </h3>
+                    <p className="font-mono text-xs text-[#666] leading-relaxed">{f.desc}</p>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      </section>
+
+      <section className="max-w-5xl mx-auto px-6 py-14">
+        <h2 className="text-2xl mb-10" style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800 }}>
+          How It Works
+        </h2>
+
+        <div className="relative">
+          <div className="hidden md:block absolute top-8 left-[40px] right-[40px] h-[3px] bg-[#111]" />
+
+          <div className="grid md:grid-cols-4 gap-6">
+            {steps.map((s, i) => {
+              const Icon = s.icon
+              return (
+                <div key={s.n} className="relative">
+                  <div
+                    className="relative z-10 w-16 h-16 border-[3px] border-[#111] flex items-center justify-center mb-4"
+                    style={{ background: i === 0 ? "#ff3c00" : i === 3 ? "#ffe87a" : "#f0ebe0", boxShadow: "3px 3px 0 #111" }}
+                  >
+                    <Icon size={20} strokeWidth={2} color={i === 0 ? "#f0ebe0" : "#111"} />
+                  </div>
+                  <div className="text-sm mb-1" style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800 }}>
+                    {s.title}
+                  </div>
+                  <p className="font-mono text-xs text-[#555] leading-relaxed">{s.desc}</p>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      </section>
+
+      <section className="max-w-5xl mx-auto px-6 pb-20">
+        <div className="nb-card bg-[#111] p-10 md:p-14 relative overflow-hidden">
+          <div
+            className="absolute -right-4 -bottom-6 text-[160px] leading-none select-none pointer-events-none"
+            style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, color: "transparent", WebkitTextStroke: "2px #222" }}
           >
-            A hands-on CTF platform for real web vulnerabilities. No slides,
-            no theory. Just you, a broken app, and a flag to find.
-          </p>
+            CTF
+          </div>
 
-          <div className="flex flex-wrap gap-3">
+          <div className="relative z-10">
+            <p className="font-mono text-xs text-[#555] mb-2">Ready to start?</p>
+            <br />
+            <span 
+              className="text-[#ff3c00] text-4xl md:text-6xl uppercase text-[#f0ebe0] leading-none mb-4"
+              style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800 }}
+            >
+              Break Things
+            </span>
+            <p className="font-mono text-sm text-[#555] mb-8 max-w-sm leading-relaxed">
+              Free account. No credit card. Just a browser and curiosity.
+            </p>
             <Link
               href={user ? "/lab" : "/register"}
-              className="inline-flex items-center gap-2 bg-[#00e676] border-4 border-black text-black font-black text-sm px-6 py-3 uppercase tracking-wide shadow-[5px_5px_0_#111] hover:shadow-[2px_2px_0_#111] hover:translate-x-[3px] hover:translate-y-[3px] transition-all active:shadow-none active:translate-x-[5px] active:translate-y-[5px]"
-              style={{ clipPath: CUT_BTN }}
+              className="nb-btn bg-[#ff3c00] text-[#f0ebe0] text-sm px-8 py-3 inline-flex items-center gap-2"
+              style={{ boxShadow: "4px 4px 0 #7a1e00" }}
             >
-              {user ? "Go to Lab" : "Start Hacking"} <ArrowRight size={16} strokeWidth={3} />
+              {user ? "Go to Lab" : "Create Free Account"} <ArrowRight size={14} strokeWidth={2.5} />
             </Link>
-            {!user && (
-              <Link
-                href="/login"
-                className="inline-flex items-center gap-2 bg-white border-4 border-black text-black font-black text-sm px-6 py-3 uppercase tracking-wide shadow-[5px_5px_0_#111] hover:shadow-[2px_2px_0_#111] hover:translate-x-[3px] hover:translate-y-[3px] transition-all"
-                style={{ clipPath: CUT_BTN }}
-              >
-                Sign In
-              </Link>
-            )}
-          </div>
-
-          <div className="flex flex-wrap mt-10 border-t-4 border-black pt-6">
-            {[
-              { val: "4",  label: "Categories"      },
-              { val: "7+", label: "Challenges"      },
-              { val: "3",  label: "Difficulties"    },
-              { val: "∞",  label: "Things to Learn" },
-            ].map((s, i) => (
-              <div
-                key={s.label}
-                className={`px-6 py-3 text-center ${i < 3 ? "border-r-4 border-black" : ""}`}
-              >
-                <div className="text-3xl font-black" style={{ fontFamily: "'Arial Black', Impact, sans-serif" }}>
-                  {s.val}
-                </div>
-                <div className="text-xs font-bold uppercase tracking-widest text-[#666] mt-0.5" style={{ fontFamily: "monospace" }}>
-                  {s.label}
-                </div>
-              </div>
-            ))}
           </div>
         </div>
       </section>
 
-      <section className="max-w-5xl mx-auto px-5 py-10">
-        <div className="flex items-center gap-3 mb-7">
-          <div className="w-4 h-9 bg-black" />
-          <div>
-            <p className="text-xs font-black uppercase tracking-widest text-[#888] mb-0.5" style={{ fontFamily: "monospace" }}>
-              Challenge Categories
-            </p>
-            <h2 className="text-3xl font-black uppercase tracking-tight leading-none" style={{ fontFamily: "'Arial Black', Impact, sans-serif" }}>
-              What You'll Break
-            </h2>
-          </div>
+      <footer className="border-t-[3px] border-[#111] bg-[#f0ebe0] px-6 py-5">
+        <div className="max-w-5xl mx-auto flex justify-between items-center">
+          <span className="font-mono text-xs text-[#888]">NzrCTF Lab</span>
+          <span className="font-mono text-xs text-[#888]">Made with ❤️ by Nizar</span>
         </div>
-
-        <div className="grid sm:grid-cols-2 gap-5">
-          {features.map((f) => {
-            const Icon = f.icon
-            return (
-              <div
-                key={f.title}
-                className="border-4 border-black p-5 shadow-[6px_6px_0_#111] hover:shadow-[3px_3px_0_#111] hover:translate-x-[3px] hover:translate-y-[3px] transition-all cursor-default"
-                style={{ backgroundColor: f.bg, clipPath: CUT }}
-              >
-                <div className="flex items-center gap-2 mb-3">
-                  <div
-                    className="w-9 h-9 flex items-center justify-center shrink-0"
-                    style={{ backgroundColor: f.accent, border: "3px solid #111", clipPath: CUT_SM }}
-                  >
-                    <Icon size={16} color="#fff" strokeWidth={2.5} />
-                  </div>
-                  <span className="font-black text-sm uppercase tracking-wide">{f.title}</span>
-                </div>
-                <p className="text-sm text-[#333] leading-snug" style={{ fontFamily: "'Courier New', monospace", fontWeight: 600 }}>
-                  {f.description}
-                </p>
-              </div>
-            )
-          })}
-        </div>
-      </section>
-
-      <section className="max-w-5xl mx-auto px-5 py-10">
-        <div className="flex items-center gap-3 mb-7">
-          <div className="w-4 h-9 bg-[#00e676] border-r-4 border-black" />
-          <div>
-            <p className="text-xs font-black uppercase tracking-widest text-[#888] mb-0.5" style={{ fontFamily: "monospace" }}>
-              How It Works
-            </p>
-            <h2 className="text-3xl font-black uppercase tracking-tight leading-none" style={{ fontFamily: "'Arial Black', Impact, sans-serif" }}>
-              Four Steps to Your First Flag
-            </h2>
-          </div>
-        </div>
-
-        <div className="grid sm:grid-cols-2 gap-5">
-          {steps.map((s) => {
-            const Icon = s.icon
-            return (
-              <div
-                key={s.num}
-                className="bg-white border-4 border-black p-5 flex gap-4 shadow-[6px_6px_0_#111] hover:shadow-[3px_3px_0_#111] hover:translate-x-[3px] hover:translate-y-[3px] transition-all"
-                style={{ clipPath: CUT }}
-              >
-                <span
-                  className="text-5xl font-black leading-none shrink-0 select-none"
-                  style={{ fontFamily: "'Arial Black', Impact, sans-serif", color: "#e8e2d8", WebkitTextStroke: "2px #111" }}
-                >
-                  {s.num}
-                </span>
-                <div>
-                  <div className="flex items-center gap-2 mb-1.5">
-                    <Icon size={15} strokeWidth={2.5} />
-                    <span className="font-black text-sm uppercase tracking-wide">{s.title}</span>
-                  </div>
-                  <p className="text-sm text-[#555] leading-snug" style={{ fontFamily: "'Courier New', monospace", fontWeight: 600 }}>
-                    {s.desc}
-                  </p>
-                </div>
-              </div>
-            )
-          })}
-        </div>
-      </section>
-
-      <section className="max-w-5xl mx-auto px-5 py-10 pb-20">
-        <div
-          className="border-4 border-black bg-[#00e676] p-10 text-center shadow-[10px_10px_0_#111]"
-          style={{ clipPath: CUT }}
-        >
-          <div
-            className="inline-flex items-center justify-center w-14 h-14 bg-black border-4 border-black mb-5"
-            style={{ clipPath: CUT_SM }}
-          >
-            <Zap size={26} color="#00e676" strokeWidth={3} />
-          </div>
-          <h2
-            className="text-4xl md:text-5xl font-black uppercase mb-3 tracking-tight text-black"
-            style={{ fontFamily: "'Arial Black', Impact, sans-serif", lineHeight: 0.95 }}
-          >
-            Ready to Start?
-          </h2>
-          <p className="text-sm mb-8 text-[#1a4a2a]" style={{ fontFamily: "'Courier New', monospace", fontWeight: 600 }}>
-            Free account. No credit card. Just a browser and curiosity.
-          </p>
-          <Link
-            href={user ? "/lab" : "/register"}
-            className="inline-flex items-center gap-2 bg-black border-4 border-black text-white font-black text-sm px-8 py-3 uppercase tracking-wide shadow-[5px_5px_0_#1a4a2a] hover:shadow-[2px_2px_0_#1a4a2a] hover:translate-x-[3px] hover:translate-y-[3px] transition-all"
-            style={{ clipPath: CUT_BTN }}
-          >
-            {user ? "Go to Lab" : "Create Free Account"} <ArrowRight size={16} strokeWidth={3} />
-          </Link>
-        </div>
-      </section>
-
-      <footer className="border-t-4 border-black bg-white px-6 py-5 text-center">
-        <span className="text-xs font-black uppercase tracking-widest text-[#bbb]" style={{ fontFamily: "monospace" }}>
-          NzrCTF Lab — Web Security Challenge Platform
-        </span>
       </footer>
     </div>
   )

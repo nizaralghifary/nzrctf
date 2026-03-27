@@ -3,22 +3,22 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import {
-  User,
-  Trophy,
-  X,
-  Menu,
-  FlaskConical,
-  Swords,
-  BarChart2,
-  BookOpenText,
-  LogOut,
-  ArrowRight,
-  ChevronDown,
-  Database,
-  Code2,
-  ShieldOff,
-  Globe,
+import { 
+  User, 
+  Trophy, 
+  X, 
+  Menu, 
+  FlaskConical, 
+  Swords, 
+  BarChart2, 
+  BookOpenText, 
+  LogOut, 
+  ArrowRight, 
+  ChevronDown, 
+  Database, 
+  Code2, 
+  ShieldOff, 
+  Globe 
 } from "lucide-react"
 
 type NavbarProps = {
@@ -30,21 +30,24 @@ type NavbarProps = {
 }
 
 const chapters = [
-  { slug: "chapter-01", label: "SQL Injection",        icon: Database,  accent: "#ff3c6e" },
-  { slug: "chapter-02", label: "Cross-Site Scripting",  icon: Code2,     accent: "#e6c200" },
-  { slug: "chapter-03", label: "Broken Access Control", icon: ShieldOff, accent: "#0066ff" },
-  { slug: "chapter-04", label: "SSRF / LFI / XXE",      icon: Globe,     accent: "#9900cc" },
+  { slug: "chapter-01", label: "SQL Injection", icon: Database },
+  { slug: "chapter-02", label: "Cross-Site Scripting", icon: Code2 },
+  { slug: "chapter-03", label: "Broken Access Control", icon: ShieldOff },
+  { slug: "chapter-04", label: "SSRF / LFI / XXE", icon: Globe }
 ]
 
-const navFont  = { fontFamily: "'Arial Black', Impact, sans-serif" }
-const monoFont = { fontFamily: "'Courier New', monospace" }
+const navItems = [
+  { href: "/lab", label: "Lab", icon: FlaskConical, exact: true },
+  { href: "/lab/leaderboard", label: "Leaderboard", icon: BarChart2, exact: false },
+  { href: "/lab/submissions", label: "Submissions", icon: BookOpenText, exact: false }
+]
 
-const CUT     = "polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px))"
-const CUT_SM  = "polygon(0 0, calc(100% - 7px) 0, 100% 7px, 100% 100%, 7px 100%, 0 calc(100% - 7px))"
-const CUT_BTN = "polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%)"
+function isActive(pathname: string, href: string, exact: boolean) {
+  return exact ? pathname === href : pathname.startsWith(href)
+}
 
-const press = "shadow-[3px_3px_0_#111] hover:shadow-[1px_1px_0_#111] hover:translate-x-[2px] hover:translate-y-[2px] active:shadow-none active:translate-x-[3px] active:translate-y-[3px] transition-all"
-const pressBig = "shadow-[4px_4px_0_#111] hover:shadow-[2px_2px_0_#111] hover:translate-x-[2px] hover:translate-y-[2px] active:shadow-none active:translate-x-[4px] active:translate-y-[4px] transition-all"
+const btn = "border-[3px] border-[#111] transition-all shadow-[3px_3px_0_#111] hover:shadow-[1px_1px_0_#111] hover:translate-x-[2px] hover:translate-y-[2px] active:shadow-none active:translate-x-[3px] active:translate-y-[3px]"
+const btnLg = "border-[3px] border-[#111] transition-all shadow-[4px_4px_0_#111] hover:shadow-[2px_2px_0_#111] hover:translate-x-[2px] hover:translate-y-[2px] active:shadow-none active:translate-x-[4px] active:translate-y-[4px]"
 
 export default function Navbar({ username, email, totalPoints = 0, isLoggedIn, logoutAction }: NavbarProps) {
   const [open, setOpen] = useState(false)
@@ -62,75 +65,56 @@ export default function Navbar({ username, email, totalPoints = 0, isLoggedIn, l
   }, [open])
 
   const displayName = username ?? email ?? "Hacker"
-  const isChallengeActive = pathname.startsWith("/challenge")
+  const isChallengeActive = pathname.startsWith("/lab/challenge")
 
   return (
     <>
-      <nav
-        className="border-b-4 border-black bg-white sticky top-0 z-50 px-5 py-3 flex items-center justify-between"
-        style={navFont}
-      >
-        <Link
-          href="/"
-          className="font-black text-base tracking-tight"
-          style={navFont}
-        >
-          NzrCTF<span className="text-[#00e676]"> Lab</span>
+      <nav className="border-b-[3px] border-[#111] bg-[#f0ebe0] sticky top-0 z-50 px-6 py-3 flex items-center justify-between">
+        <Link href="/" className="text-base tracking-tight" style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800 }}>
+          NzrCTF<span className="text-[#ff3c00]"> Lab</span>
         </Link>
 
         {isLoggedIn ? (
-          <div className="hidden sm:flex items-center gap-1">
-            {[
-              { href: "/lab",         label: "Lab"         },
-              { href: "/leaderboard", label: "Leaderboard" },
-              { href: "/submissions", label: "Submissions"  },
-            ].map((item) => {
-              const active = pathname.startsWith(item.href)
+          <div className="hidden sm:flex items-center gap-1.5">
+            {navItems.map((item) => {
+              const active = isActive(pathname, item.href, item.exact)
               return (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`text-xs font-black uppercase px-3 py-2 border-2 border-black transition-all ${
+                  className={`font-mono text-xs px-3 py-2 border-[3px] border-[#111] transition-all ${
                     active
-                      ? "bg-black text-white shadow-none translate-x-[2px] translate-y-[2px]"
-                      : `bg-white text-black ${press}`
+                      ? "bg-[#111] text-[#f0ebe0] translate-x-[2px] translate-y-[2px]"
+                      : `bg-[#f0ebe0] text-[#111] ${btn}`
                   }`}
-                  style={{ ...monoFont, clipPath: CUT_BTN }}
                 >
                   {item.label}
                 </Link>
               )
             })}
 
-            <div className="w-px h-5 bg-black mx-2" />
+            <div className="w-px h-4 bg-[#ccc] mx-1" />
 
             <Link
-              href="/account"
-              className={`flex items-center gap-1.5 text-xs font-black uppercase px-3 py-2 border-2 border-black transition-all ${
-                pathname.startsWith("/account")
-                  ? "bg-black text-white shadow-none translate-x-[2px] translate-y-[2px]"
-                  : `bg-white text-black ${press}`
+              href="/lab/account"
+              className={`font-mono flex items-center gap-1.5 text-xs px-3 py-2 border-[3px] border-[#111] transition-all ${
+                pathname.startsWith("/lab/account")
+                  ? "bg-[#111] text-[#f0ebe0] translate-x-[2px] translate-y-[2px]"
+                  : `bg-[#f0ebe0] text-[#111] ${btn}`
               }`}
-              style={{ ...monoFont, clipPath: CUT_BTN }}
             >
-              <User size={12} strokeWidth={3} />
+              <User size={11} strokeWidth={2.5} />
               {displayName}
             </Link>
 
-            <div
-              className="flex items-center gap-1.5 bg-[#00e676] border-2 border-black text-black text-xs font-black uppercase px-3 py-2"
-              style={{ ...monoFont, clipPath: CUT_BTN }}
-            >
-              <Trophy size={12} strokeWidth={3} />
+            <div className="font-mono flex items-center gap-1.5 bg-[#ffe87a] border-[3px] border-[#111] text-[#111] text-xs px-3 py-2">
+              <Trophy size={11} strokeWidth={2.5} />
               {totalPoints} pts
             </div>
 
             {logoutAction && (
               <form action={logoutAction}>
-                <button
-                  className={`text-xs font-black uppercase px-3 py-2 border-2 border-black text-black bg-white ${press}`}
-                  style={{ ...monoFont, clipPath: CUT_BTN }}
-                >
+                <button className={`font-mono text-xs px-3 py-2 bg-[#f0ebe0] text-[#111] ${btn}`}>
                   Logout
                 </button>
               </form>
@@ -138,29 +122,21 @@ export default function Navbar({ username, email, totalPoints = 0, isLoggedIn, l
           </div>
         ) : (
           <div className="hidden sm:flex items-center gap-2">
-            <Link
-              href="/login"
-              className={`text-xs font-black uppercase px-4 py-2 border-2 border-black bg-white text-black ${press}`}
-              style={{ ...monoFont, clipPath: CUT_BTN }}
-            >
-              Sign In
+            <Link href="/login" className={`font-mono text-xs px-4 py-2 bg-[#f0ebe0] text-[#111] ${btn}`}>
+              Login
             </Link>
-            <Link
-              href="/register"
-              className={`flex items-center gap-1.5 text-xs font-black uppercase px-4 py-2 border-2 border-black bg-[#00e676] text-black ${press}`}
-              style={{ ...monoFont, clipPath: CUT_BTN }}
-            >
-              Register <ArrowRight size={12} strokeWidth={3} />
+            <Link href="/register" className={`nb-btn font-mono flex items-center gap-1.5 text-xs px-4 py-2 bg-[#ff3c00] text-[#f0ebe0] active:shadow-none active:translate-x-[4px] active:translate-y-[4px]`}>
+              Register <ArrowRight size={11} strokeWidth={2.5} />
             </Link>
           </div>
         )}
 
         <button
           onClick={() => setOpen(!open)}
-          className={`sm:hidden border-2 border-black p-1.5 bg-white ${press}`}
+          className={`sm:hidden p-1.5 bg-[#f0ebe0] ${btn}`}
           aria-label="toggle-menu"
         >
-          {open ? <X size={18} strokeWidth={3} /> : <Menu size={18} strokeWidth={3} />}
+          {open ? <X size={16} strokeWidth={2.5} /> : <Menu size={16} strokeWidth={2.5} />}
         </button>
       </nav>
 
@@ -168,87 +144,76 @@ export default function Navbar({ username, email, totalPoints = 0, isLoggedIn, l
         onClick={() => setOpen(false)}
         className="fixed inset-0 z-[60] sm:hidden"
         style={{
-          background: "rgba(244,239,228,0.55)",
+          background: "rgba(240,235,224,0.6)",
           backdropFilter: "blur(6px)",
           WebkitBackdropFilter: "blur(6px)",
           opacity: open ? 1 : 0,
           pointerEvents: open ? "auto" : "none",
-          transition: "opacity 0.25s ease",
+          transition: "opacity 0.22s ease",
         }}
       />
 
       <div
-        className="fixed top-0 right-0 h-full w-72 z-[70] sm:hidden flex flex-col bg-[#f4efe4] border-l-4 border-black"
-        style={{
-          transform: open ? "translateX(0)" : "translateX(100%)",
-          transition: "transform 0.3s cubic-bezier(0.4,0,0.2,1)",
-          ...navFont,
-        }}
+        className="fixed top-0 right-0 h-full w-72 z-[70] sm:hidden flex flex-col bg-[#f0ebe0] border-l-[3px] border-[#111]"
+        style={{ transform: open ? "translateX(0)" : "translateX(100%)", transition: "transform 0.28s cubic-bezier(0.4,0,0.2,1)" }}
       >
-        <div className="flex items-center justify-between px-5 py-4 border-b-4 border-black bg-white">
-          <span className="font-black text-base tracking-tight" style={navFont}>
-            NzrCTF<span className="text-[#00e676]"> Lab</span>
+        <div className="flex items-center justify-between px-5 py-4 border-b-[3px] border-[#111]">
+          <span className="text-base tracking-tight" style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800 }}>
+            NzrCTF<span className="text-[#ff3c00]"> Lab</span>
           </span>
           <button
             onClick={() => setOpen(false)}
-            className={`border-2 border-black p-1 bg-white ${press}`}
+            className={`p-1 bg-[#f0ebe0] ${btn}`}
           >
-            <X size={16} strokeWidth={3} />
+            <X size={14} strokeWidth={2.5} />
           </button>
         </div>
 
         {isLoggedIn ? (
           <>
             <Link
-              href="/account"
-              className={`mx-4 mt-4 border-4 border-black p-4 ${pressBig} ${
-                pathname.startsWith("/account") ? "bg-[#00e676]" : "bg-white"
+              href="/lab/account"
+              className={`mx-4 mt-4 border-[3px] border-[#111] p-4 transition-all ${
+                pathname.startsWith("/lab/account")
+                  ? "bg-[#ffe87a]"
+                  : `bg-white ${btnLg}`
               }`}
-              style={{ clipPath: CUT }}
             >
               <div className="flex items-center gap-2.5 mb-2">
-                <div
-                  className="w-8 h-8 bg-black flex items-center justify-center shrink-0"
-                  style={{ clipPath: CUT_SM }}
-                >
-                  <User size={14} color="#00e676" strokeWidth={2.5} />
+                <div className="w-8 h-8 bg-[#111] flex items-center justify-center shrink-0">
+                  <User size={13} color="#f0ebe0" strokeWidth={2.5} />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <div className="font-black text-sm uppercase truncate" style={navFont}>{displayName}</div>
+                  <div className="font-mono text-sm font-medium truncate">{displayName}</div>
                   {email && username && (
-                    <div className="text-[#666] text-xs truncate" style={monoFont}>{email}</div>
+                    <div className="text-[#888] text-xs font-mono truncate">{email}</div>
                   )}
                 </div>
-                <ArrowRight size={14} strokeWidth={3} className="shrink-0" />
+                <ArrowRight size={13} strokeWidth={2.5} className="shrink-0" />
               </div>
-              <div className="flex items-center gap-1.5 text-xs font-black uppercase" style={monoFont}>
-                <Trophy size={11} strokeWidth={3} />
+              <div className="flex items-center gap-1.5 font-mono text-xs">
+                <Trophy size={10} strokeWidth={2.5} />
                 {totalPoints} pts
               </div>
             </Link>
 
             <div className="flex-1 px-4 py-4 flex flex-col gap-2 overflow-y-auto">
-              {[
-                { href: "/lab",         label: "Lab",         icon: FlaskConical },
-                { href: "/leaderboard", label: "Leaderboard", icon: BarChart2    },
-                { href: "/submissions", label: "Submissions",  icon: BookOpenText },
-              ].map((item) => {
+              {navItems.map((item) => {
                 const Icon = item.icon
-                const active = pathname.startsWith(item.href)
+                const active = isActive(pathname, item.href, item.exact)
                 return (
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={`flex items-center gap-3 px-4 py-3 border-4 border-black font-black text-sm uppercase transition-all ${
+                    className={`flex items-center gap-3 px-4 py-3 border-[3px] border-[#111] font-mono text-sm transition-all ${
                       active
-                        ? "bg-black text-white shadow-none translate-x-[4px] translate-y-[4px]"
-                        : `bg-white text-black ${pressBig}`
+                        ? "bg-[#111] text-[#f0ebe0] translate-x-[3px] translate-y-[3px]"
+                        : `bg-white text-[#111] ${btnLg}`
                     }`}
-                    style={{ ...navFont, clipPath: CUT }}
                   >
-                    <Icon size={15} strokeWidth={active ? 2.5 : 2} />
+                    <Icon size={14} strokeWidth={2} />
                     {item.label}
-                    {active && <ArrowRight size={13} strokeWidth={3} className="ml-auto" />}
+                    {active && <ArrowRight size={12} strokeWidth={2.5} className="ml-auto" />}
                   </Link>
                 )
               })}
@@ -256,18 +221,17 @@ export default function Navbar({ username, email, totalPoints = 0, isLoggedIn, l
               <div>
                 <button
                   onClick={() => setChallengesOpen(!challengesOpen)}
-                  className={`w-full flex items-center gap-3 px-4 py-3 border-4 border-black font-black text-sm uppercase transition-all ${
+                  className={`w-full flex items-center gap-3 px-4 py-3 border-[3px] border-[#111] font-mono text-sm transition-all ${
                     isChallengeActive
-                      ? "bg-black text-white shadow-none translate-x-[4px] translate-y-[4px]"
-                      : `bg-white text-black ${pressBig}`
+                      ? "bg-[#111] text-[#f0ebe0] translate-x-[3px] translate-y-[3px]"
+                      : `bg-white text-[#111] ${btnLg}`
                   }`}
-                  style={{ ...navFont, clipPath: CUT }}
                 >
-                  <Swords size={15} strokeWidth={2} />
+                  <Swords size={14} strokeWidth={2} />
                   Challenges
                   <ChevronDown
-                    size={13}
-                    strokeWidth={3}
+                    size={12}
+                    strokeWidth={2.5}
                     className="ml-auto transition-transform duration-200"
                     style={{ transform: challengesOpen ? "rotate(180deg)" : "rotate(0deg)" }}
                   />
@@ -280,26 +244,20 @@ export default function Navbar({ username, email, totalPoints = 0, isLoggedIn, l
                   <div className="pl-3 pt-2 flex flex-col gap-2">
                     {chapters.map((ch) => {
                       const Icon = ch.icon
-                      const active = pathname === `/challenge/${ch.slug}`
+                      const active = pathname === `/lab/challenge/${ch.slug}`
                       return (
                         <Link
                           key={ch.slug}
-                          href={`/challenge/${ch.slug}`}
-                          className={`flex items-center gap-2.5 px-3 py-2.5 border-4 border-black text-xs font-black uppercase transition-all ${
+                          href={`/lab/challenge/${ch.slug}`}
+                          className={`flex items-center gap-2.5 px-3 py-2.5 border-[3px] border-[#111] font-mono text-xs transition-all ${
                             active
-                              ? "shadow-none translate-x-[3px] translate-y-[3px]"
-                              : press
+                              ? "bg-[#111] text-[#f0ebe0] translate-x-[2px] translate-y-[2px]"
+                              : `bg-white text-[#111] ${btn}`
                           }`}
-                          style={{
-                            ...navFont,
-                            clipPath: CUT,
-                            backgroundColor: active ? ch.accent : "white",
-                            color: active ? "white" : "#111",
-                          }}
                         >
-                          <Icon size={13} strokeWidth={2.5} />
+                          <Icon size={12} strokeWidth={2.5} />
                           {ch.label}
-                          {active && <ArrowRight size={11} strokeWidth={3} className="ml-auto" />}
+                          {active && <ArrowRight size={10} strokeWidth={2.5} className="ml-auto" />}
                         </Link>
                       )
                     })}
@@ -308,15 +266,14 @@ export default function Navbar({ username, email, totalPoints = 0, isLoggedIn, l
               </div>
             </div>
 
-            <div className="px-4 py-4 border-t-4 border-black">
+            <div className="px-4 py-4 border-t-[3px] border-[#111]">
               {logoutAction && (
                 <form action={logoutAction}>
                   <button
                     type="submit"
-                    className={`w-full flex items-center gap-3 px-4 py-3 border-4 border-black bg-[#ff3c6e] text-white font-black text-sm uppercase ${pressBig}`}
-                    style={{ ...navFont, clipPath: CUT }}
+                    className={`w-full flex items-center gap-3 px-4 py-3 border-[3px] border-[#111] bg-[#ff3c00] text-[#f0ebe0] font-mono text-sm ${btnLg}`}
                   >
-                    <LogOut size={15} strokeWidth={2.5} />
+                    <LogOut size={14} strokeWidth={2.5} />
                     Logout
                   </button>
                 </form>
@@ -327,17 +284,15 @@ export default function Navbar({ username, email, totalPoints = 0, isLoggedIn, l
           <div className="flex-1 px-4 py-6 flex flex-col gap-3">
             <Link
               href="/login"
-              className={`flex items-center justify-center px-4 py-3 border-4 border-black bg-white text-black font-black text-sm uppercase ${pressBig}`}
-              style={{ ...navFont, clipPath: CUT }}
+              className={`flex items-center justify-center px-4 py-3 border-[3px] border-[#111] bg-white text-[#111] font-mono text-sm ${btnLg}`}
             >
-              Sign In
+              Login
             </Link>
             <Link
               href="/register"
-              className={`flex items-center justify-center gap-2 px-4 py-3 border-4 border-black bg-[#00e676] text-black font-black text-sm uppercase ${pressBig}`}
-              style={{ ...navFont, clipPath: CUT }}
+              className={`flex items-center justify-center gap-2 px-4 py-3 border-[3px] border-[#111] bg-[#ff3c00] text-[#f0ebe0] font-mono text-sm ${btnLg}`}
             >
-              Register <ArrowRight size={13} strokeWidth={3} />
+              Register <ArrowRight size={12} strokeWidth={2.5} />
             </Link>
           </div>
         )}
