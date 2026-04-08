@@ -77,6 +77,7 @@ export async function submitFlag(prevState: State, formData: FormData): Promise<
       .update({
         submitted_flag: flag.trim(),
         is_correct: isCorrect,
+        submitted_at: new Date().toISOString(),
       })
       .eq("id", existing.id)
   } else {
@@ -87,6 +88,7 @@ export async function submitFlag(prevState: State, formData: FormData): Promise<
         challenge_id: challengeId,
         submitted_flag: flag.trim(),
         is_correct: isCorrect,
+        submitted_at: new Date().toISOString(),
       })
   }
 

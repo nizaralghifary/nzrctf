@@ -246,7 +246,7 @@ export default async function Home() {
       <footer className="border-t-[3px] border-[#111] bg-[#f0ebe0] px-6 py-5">
         <div className="max-w-5xl mx-auto flex justify-between items-center">
           <span className="font-mono text-xs text-[#888]">NzrCTF Lab</span>
-          <span className="font-mono text-xs text-[#888]">Made with ❤️ by Nizar</span>
+          <span className="font-mono text-xs text-[#888]">Made with ❤️ by Nzr</span>
         </div>
       </footer>
     </div>

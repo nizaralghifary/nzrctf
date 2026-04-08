@@ -128,7 +128,7 @@ export default async function Chapter({ params }: { params: Promise<{ chapter: s
                         {challenge.title}
                       </span>
                       {solved && (
-                        <span className="nb-tag" style={{ background: "#b8f5a0" }}>solved ✓</span>
+                        <span className="nb-tag" style={{ background: "#b8f5a0" }}>solved</span>
                       )}
                     </div>
 

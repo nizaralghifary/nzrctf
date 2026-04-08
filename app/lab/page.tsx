@@ -141,7 +141,7 @@ export default async function Lab() {
                           {chapter.title}
                         </span>
                         {done && (
-                          <span className="nb-tag" style={{ background: "#b8f5a0" }}>done ✓</span>
+                          <span className="nb-tag" style={{ background: "#b8f5a0" }}>done</span>
                         )}
                       </div>
 
