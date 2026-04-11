@@ -11,7 +11,7 @@ import {
   FlaskConical, 
   Swords, 
   BarChart2, 
-  BookOpenText, 
+  History, 
   LogOut, 
   ArrowRight, 
   ChevronDown, 
@@ -39,7 +39,7 @@ const chapters = [
 const navItems = [
   { href: "/lab", label: "Lab", icon: FlaskConical, exact: true },
   { href: "/lab/leaderboard", label: "Leaderboard", icon: BarChart2, exact: false },
-  { href: "/lab/submissions", label: "Submissions", icon: BookOpenText, exact: false }
+  { href: "/lab/submissions", label: "Submissions", icon: History, exact: false }
 ]
 
 function isActive(pathname: string, href: string, exact: boolean) {

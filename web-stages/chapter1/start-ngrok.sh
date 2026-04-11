@@ -1,40 +1,38 @@
 #!/bin/bash
 
-SESSION="ngrok"
-URL_FILE="ngrok_urls.txt"
+set -a
+source .env
+set +a
 
-STAGE1_PORT=3938
-STAGE2_PORT=2765
+SESSION=$SESSION_NAME
+FILE=$URL_FILE
 
 echo "[*] Starting ngrok tunnels in tmux session: $SESSION"
 
 tmux kill-session -t $SESSION 2>/dev/null
-rm -f $URL_FILE
+rm -f $FILE
 
 tmux new-session -d -s $SESSION
 
-# Stage 1
-tmux send-keys -t $SESSION "echo '[*] Starting Stage1 on port $STAGE1_PORT'; ngrok http $STAGE1_PORT --log=stdout" C-m
+tmux send-keys -t $SESSION "echo '[*] Stage1 → $PORT_A'; ngrok http $PORT_A --log=stdout" C-m
 
 tmux split-window -h -t $SESSION
+tmux send-keys -t $SESSION "echo '[*] Stage2 → $PORT_B'; ngrok http $PORT_B --log=stdout" C-m
 
-# Stage 2
-tmux send-keys -t $SESSION "echo '[*] Starting Stage2 on port $STAGE2_PORT'; ngrok http $STAGE2_PORT --log=stdout" C-m
+tmux split-window -h -t $SESSION
+tmux send-keys -t $SESSION "echo '[*] Stage3 → $PORT_C'; ngrok http $PORT_C --log=stdout" C-m
 
-tmux select-pane -t 0
+tmux select-layout -t $SESSION even-horizontal
 
 if [[ -t 1 ]]; then
     tmux attach -t $SESSION
-else
-    echo "[*] Non-interactive shell detected, skipping tmux attach"
 fi
 
 sleep 5
 
-echo "[*] Fetching public URLs..."
-curl --silent http://127.0.0.1:4040/api/tunnels | jq -r '.tunnels[].public_url' > $URL_FILE
+curl --silent http://127.0.0.1:4040/api/tunnels | jq -r '.tunnels[].public_url' > $FILE
 
-echo "[*] Public URLs saved to $URL_FILE"
-cat $URL_FILE
-
-echo "[*] Done. Stage1: $STAGE1_PORT, Stage2: $STAGE2_PORT"
+echo "[*] URLs:"
+echo "Stage1: $(sed -n '1p' $FILE)"
+echo "Stage2: $(sed -n '2p' $FILE)"
+echo "Stage3: $(sed -n '3p' $FILE)"

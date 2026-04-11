@@ -75,7 +75,7 @@ app.get("/dashboard", (req, res) => {
 
   res.render("dashboard", {
     user: req.session.user,
-    flag: process.env.FLAGB
+    flag: process.env.FLAG_B
   });
 });
 
@@ -85,6 +85,6 @@ app.post("/logout", (req, res) => {
   });
 });
 
-app.listen(process.env.PORTB, () => {
-  console.log(`Stage 2 running on http://localhost:${process.env.PORTB}`);
+app.listen(process.env.PORT_B, () => {
+  console.log(`Stage 2 running on http://localhost:${process.env.PORT_B}`);
 });
