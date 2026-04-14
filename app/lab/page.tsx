@@ -33,8 +33,8 @@ const chapterConfig = [
   {
     id: 4,
     slug: "chapter-04",
-    title: "SSRF / LFI / XXE",
-    description: "Reach internal services, read sensitive files, and exploit XML parsers.",
+    title: "SSRF",
+    description: "Make the server send requests on your behalf. Hit internal services, bypass firewalls, reach what's supposed to be unreachable.",
     icon: Globe,
     tag: "ssrf",
   },

@@ -33,7 +33,7 @@ const chapters = [
   { slug: "chapter-01", label: "SQL Injection", icon: Database },
   { slug: "chapter-02", label: "Cross-Site Scripting", icon: Code2 },
   { slug: "chapter-03", label: "Broken Access Control", icon: ShieldOff },
-  { slug: "chapter-04", label: "SSRF / LFI / XXE", icon: Globe }
+  { slug: "chapter-04", label: "SSRF", icon: Globe }
 ]
 
 const navItems = [

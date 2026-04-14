@@ -21,7 +21,7 @@ export default async function Home() {
     { tag: "sqli", title: "SQL Injection", desc: "Bypass logins, dump tables, read data you're not supposed to see. Old school, still hits.", icon: Database },
     { tag: "xss", title: "Cross-Site Scripting", desc: "Inject scripts, steal cookies, hijack sessions. The browser is your weapon.", icon: Code2 },
     { tag: "bac", title: "Broken Access Control", desc: "Access endpoints you shouldn't, manipulate references, escalate your way up.", icon: ShieldOff },
-    { tag: "ssrf", title: "SSRF / LFI / XXE", desc: "Hit internal services, read sensitive files, bend XML parsers to your will.", icon: Globe }
+    { tag: "ssrf", title: "SSRF", desc: "Make the server send requests on your behalf. Hit internal services, bypass firewalls, reach what's supposed to be unreachable.", icon: Globe }
   ]
 
   const steps = [

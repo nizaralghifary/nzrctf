@@ -7,16 +7,16 @@ import NavbarServer from "@/components/navbar-server"
 import { CheckCircle, ExternalLink, Database, Code2, ShieldOff, Globe, ArrowLeft, Lock } from "lucide-react"
 
 const chapterConfig: Record<string, { id: number; title: string; icon: React.ElementType; tag: string }> = {
-  "chapter-01": { id: 1, title: "SQL Injection",        icon: Database,  tag: "sqli" },
-  "chapter-02": { id: 2, title: "Cross-Site Scripting",  icon: Code2,     tag: "xss"  },
-  "chapter-03": { id: 3, title: "Broken Access Control", icon: ShieldOff, tag: "bac"  },
-  "chapter-04": { id: 4, title: "SSRF / LFI / XXE",      icon: Globe,     tag: "ssrf" },
+  "chapter-01": { id: 1, title: "SQL Injection", icon: Database, tag: "sqli" },
+  "chapter-02": { id: 2, title: "Cross-Site Scripting", icon: Code2, tag: "xss" },
+  "chapter-03": { id: 3, title: "Broken Access Control", icon: ShieldOff, tag: "bac" },
+  "chapter-04": { id: 4, title: "SSRF", icon: Globe, tag: "ssrf" },
 }
 
 const diffColor: Record<string, string> = {
-  easy:   "#b8f5a0",
+  easy: "#b8f5a0",
   medium: "#ffe87a",
-  hard:   "#ffb3b3",
+  hard: "#ffb3b3",
 }
 
 export default async function Chapter({ params }: { params: Promise<{ chapter: string }> }) {
@@ -45,9 +45,9 @@ export default async function Chapter({ params }: { params: Promise<{ chapter: s
   )
 
   const chapterSolved = challenges?.filter((c) => solvedIds.has(c.id)).length ?? 0
-  const chapterTotal  = challenges?.length ?? 0
-  const percentage    = chapterTotal > 0 ? Math.round((chapterSolved / chapterTotal) * 100) : 0
-  const Icon          = config.icon
+  const chapterTotal = challenges?.length ?? 0
+  const percentage = chapterTotal > 0 ? Math.round((chapterSolved / chapterTotal) * 100) : 0
+  const Icon = config.icon
 
   return (
     <div className="min-h-screen bg-[#f0ebe0] text-[#111]">
@@ -86,93 +86,104 @@ export default async function Chapter({ params }: { params: Promise<{ chapter: s
           <p className="font-mono text-xs text-[#888] uppercase tracking-widest">Stages</p>
         </div>
 
-        <div className="grid gap-4">
-          {challenges?.map((challenge, idx) => {
-            const solved     = solvedIds.has(challenge.id)
-            const prevChallenge = idx > 0 ? challenges[idx - 1] : null
-            const isLocked   = prevChallenge !== null && !solvedIds.has(prevChallenge.id)
+        {!challenges || challenges.length === 0 ? (
+          <div className="border-[3px] border-[#111] bg-white p-12 text-center shadow-[5px_5px_0_#111]">
+            <p className="text-xl mb-2" style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800 }}>
+              Coming Soon
+            </p>
+            <p className="font-mono text-xs text-[#888]">
+              Challenges for this chapter are still being prepared
+            </p>
+          </div>
+        ) : (
+          <div className="grid gap-4">
+            {challenges.map((challenge, idx) => {
+              const solved = solvedIds.has(challenge.id)
+              const prevChallenge = idx > 0 ? challenges[idx - 1] : null
+              const isLocked = prevChallenge !== null && !solvedIds.has(prevChallenge.id)
 
-            return (
-              <div
-                key={challenge.id}
-                className={`border-[3px] border-[#111] p-5 transition-all ${
-                  isLocked
-                    ? "bg-[#e8e2d8] opacity-60"
-                    : solved
-                    ? "bg-white"
-                    : "bg-white shadow-[5px_5px_0_#111]"
-                }`}
-              >
-                <div className="flex items-start gap-4">
-                  <div
-                    className="shrink-0 w-10 h-10 flex items-center justify-center border-[3px] border-[#111]"
-                    style={{ background: isLocked ? "#ccc" : solved ? "#b8f5a0" : "#f0ebe0" }}
-                  >
-                    {isLocked ? (
-                      <Lock size={14} color="#888" strokeWidth={2} />
-                    ) : solved ? (
-                      <CheckCircle size={14} color="#111" strokeWidth={2} />
-                    ) : (
-                      <span className="font-mono text-xs font-medium text-[#888]">
-                        {String(idx + 1).padStart(2, "0")}
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2 flex-wrap mb-1">
-                      <span
-                        className={`text-sm ${isLocked ? "text-[#aaa]" : "text-[#111]"}`}
-                        style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800 }}
-                      >
-                        {challenge.title}
-                      </span>
-                      {solved && (
-                        <span className="nb-tag" style={{ background: "#b8f5a0" }}>solved</span>
+              return (
+                <div
+                  key={challenge.id}
+                  className={`border-[3px] border-[#111] p-5 transition-all ${
+                    isLocked
+                      ? "bg-[#e8e2d8] opacity-60"
+                      : solved
+                      ? "bg-white"
+                      : "bg-white shadow-[5px_5px_0_#111]"
+                  }`}
+                >
+                  <div className="flex items-start gap-4">
+                    <div
+                      className="shrink-0 w-10 h-10 flex items-center justify-center border-[3px] border-[#111]"
+                      style={{ background: isLocked ? "#ccc" : solved ? "#b8f5a0" : "#f0ebe0" }}
+                    >
+                      {isLocked ? (
+                        <Lock size={14} color="#888" strokeWidth={2} />
+                      ) : solved ? (
+                        <CheckCircle size={14} color="#111" strokeWidth={2} />
+                      ) : (
+                        <span className="font-mono text-xs font-medium text-[#888]">
+                          {String(idx + 1).padStart(2, "0")}
+                        </span>
                       )}
                     </div>
 
-                    <p className={`font-mono text-xs leading-relaxed mb-3 ${isLocked ? "text-[#bbb]" : "text-[#666]"}`}>
-                      {isLocked ? "Complete the previous stage to unlock this one." : challenge.description}
-                    </p>
-
-                    {!isLocked && (
-                      <div className="flex flex-col gap-2">
-                        <div className="flex flex-wrap items-center gap-2">
-                          {challenge.difficulty && (
-                            <span
-                              className="nb-tag"
-                              style={{ background: diffColor[challenge.difficulty] ?? "#f0ebe0" }}
-                            >
-                              {challenge.difficulty}
-                            </span>
-                          )}
-
-                          <span className="nb-tag" style={{ background: "#ffe87a" }}>
-                            {challenge.points} pts
-                          </span>
-
-                          <a
-                            href={challenge.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 font-mono text-xs border-[2px] border-[#111] bg-[#f0ebe0] px-3 py-1 shadow-[2px_2px_0_#111] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
-                          >
-                            Open Web <ExternalLink size={10} strokeWidth={2.5} />
-                          </a>
-                        </div>
-
-                        {!solved && (
-                          <SubmitForm challengeId={challenge.id} chapterSlug={chapterSlug} />
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2 flex-wrap mb-1">
+                        <span
+                          className={`text-sm ${isLocked ? "text-[#aaa]" : "text-[#111]"}`}
+                          style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800 }}
+                        >
+                          {challenge.title}
+                        </span>
+                        {solved && (
+                          <span className="nb-tag" style={{ background: "#b8f5a0" }}>solved</span>
                         )}
                       </div>
-                    )}
+
+                      <p className={`font-mono text-xs leading-relaxed mb-3 ${isLocked ? "text-[#bbb]" : "text-[#666]"}`}>
+                        {isLocked ? "Complete the previous stage to unlock this one." : challenge.description}
+                      </p>
+
+                      {!isLocked && (
+                        <div className="flex flex-col gap-2">
+                          <div className="flex flex-wrap items-center gap-2">
+                            {challenge.difficulty && (
+                              <span
+                                className="nb-tag"
+                                style={{ background: diffColor[challenge.difficulty] ?? "#f0ebe0" }}
+                              >
+                                {challenge.difficulty}
+                              </span>
+                            )}
+
+                            <span className="nb-tag" style={{ background: "#ffe87a" }}>
+                              {challenge.points} pts
+                            </span>
+
+                            <a
+                              href={challenge.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 font-mono text-xs border-[2px] border-[#111] bg-[#f0ebe0] px-3 py-1 shadow-[2px_2px_0_#111] hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
+                            >
+                              Open Web <ExternalLink size={10} strokeWidth={2.5} />
+                            </a>
+                          </div>
+
+                          {!solved && (
+                            <SubmitForm challengeId={challenge.id} chapterSlug={chapterSlug} />
+                          )}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            )
-          })}
-        </div>
+              )
+            })}
+          </div>
+        )}
       </main>
     </div>
   )
