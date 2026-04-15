@@ -9,7 +9,7 @@
     <a href="https://ctf.nizar.my.id">Visit Site</a>
   </p>
   <p align="center">
-    NzrCTF is a beginner-friendly Capture The Flag platform focused on real-world web exploitation
+    NzrCTF is a beginner-friendly CTF platform designed to help you learn web exploitation through real-world scenarios
   </p>
 </div>
 
@@ -20,7 +20,7 @@
 - Neobrutalist UI design
 - Real vulnerable targets
 
-> This project is still under development. Some limitations exist due to VPS capacity, especially for hosting multiple vulnerable services simultaneously
+> Some features may be limited as we continue improving scalability and infrastructure
 
 ### Demo Account
 - Username: Demo_1
