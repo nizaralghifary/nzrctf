@@ -22,10 +22,6 @@
 
 > Some features may be limited as we continue improving scalability and infrastructure
 
-### Demo Account
-- Username: Demo_1
-- Password: NjEeR58C1s9r
-
 ### Installation
 
 **Clone Repository**
